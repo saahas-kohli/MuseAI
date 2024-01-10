@@ -1,2 +1,3 @@
 # lr sk
-# mintu
+
+mintu
