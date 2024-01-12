@@ -1,3 +1,3 @@
 # lr sk
 
-mintu
+mintu kotamraju
