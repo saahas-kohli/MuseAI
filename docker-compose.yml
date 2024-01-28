@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   client:
@@ -20,7 +20,10 @@ services:
     ports:
       - "9000:9000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    environment:
+      - PGUSER=${POSTGRES_USER}
 
   db:
     build:
@@ -30,3 +33,10 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: test
+      PGUSER: "postgres"
+    healthcheck:
+      #CHANGE 1: this command checks if the database is ready, right on the source db server
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
