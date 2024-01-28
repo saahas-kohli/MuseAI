@@ -2,11 +2,11 @@ const Sequelize = require('sequelize');
 const { DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize(
-  process.env.DB_SCHEMA || 'postgres',
+  process.env.DB_SCHEMA || 'public',
   process.env.DB_USER || 'postgres',
-  process.env.DB_PASSWORD || '',
+  process.env.DB_PASSWORD || 'test',
   {
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || 'db',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     dialectOptions: {
@@ -32,9 +32,9 @@ sequelize.query('CREATE DATABASE perntodo;')
     const pernTodoSequelize = new Sequelize(
       'perntodo',
       process.env.DB_USER || 'postgres',
-      process.env.DB_PASSWORD || '',
+      process.env.DB_PASSWORD || 'test',
       {
-        host: process.env.DB_HOST || 'localhost',
+        host: process.env.DB_HOST || 'db',
         port: process.env.DB_PORT || 5432,
         dialect: 'postgres',
         dialectOptions: {
