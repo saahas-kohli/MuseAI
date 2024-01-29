@@ -13,6 +13,8 @@ services:
       DB_USER: postgres
       DB_PASSWORD: test
       DB_HOST: db
+    networks:
+      - pern-network
 
   server:
     build:
@@ -24,6 +26,8 @@ services:
         condition: service_healthy
     environment:
       - PGUSER=${POSTGRES_USER}
+    networks:
+      - pern-network
 
   db:
     build:
@@ -40,3 +44,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - pern-network
+
+networks:
+  pern-network:
+    driver: bridge
