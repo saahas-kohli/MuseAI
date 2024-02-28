@@ -80,7 +80,7 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
           <Box pos="absolute" right="0" padding="2">
             <Menu>
               <MenuButton _focus={{ outline: "none" }}>
-                <Icon as={MdMoreHoriz} boxSize={5}></Icon>
+                <Icon as={MdMoreHoriz} boxSize={5} marginTop="6px"></Icon>
               </MenuButton>
               <MenuList>
                 <MenuItem
