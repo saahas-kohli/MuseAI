@@ -10,6 +10,7 @@ import { MdArrowUpward } from "react-icons/md";
 import { Icon } from "@chakra-ui/react";
 
 function StagingArea() {
+  const [enteredDesc, setEnteredDesc] = useState("");
   return (
     <Box
       pos="absolute"
@@ -18,12 +19,15 @@ function StagingArea() {
       marginLeft="15.75%"
       marginBottom={8}
     >
-      <AutosizeTextarea />
+      <AutosizeTextarea
+        enteredDesc={enteredDesc}
+        setEnteredDesc={setEnteredDesc}
+      />
     </Box>
   );
 }
 
-function AutosizeTextarea() {
+const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
 
@@ -36,7 +40,7 @@ function AutosizeTextarea() {
         autosize.destroy(textarea);
       };
     }
-  }, [flag]);
+  }, [flag, enteredDesc]);
 
   const handleChange = () => {
     const textarea = ref.current;
@@ -47,7 +51,6 @@ function AutosizeTextarea() {
         .substr(0, cursorPosition)
         .split("\n").length;
       const currentLine = lines[currentLineNumber - 1];
-      console.log(textarea.value);
 
       // Create a temporary span element with the same styles as the textarea
       const tempSpan = document.createElement("span");
@@ -79,10 +82,27 @@ function AutosizeTextarea() {
     }
   };
 
+  const handleEnter = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      // Prevent the default behavior (adding a new line)
+      e.preventDefault();
+      const textarea = ref.current;
+      setEnteredDesc(textarea.value);
+      textarea.value = "";
+    }
+  };
+
+  const handleEnterButton = (e) => {
+    const textarea = ref.current;
+    setEnteredDesc(textarea.value);
+    textarea.value = "";
+  };
+
   return (
     <Box display="flex" alignItems="center" position="relative">
       <Textarea
         onChange={handleChange}
+        onKeyDown={handleEnter}
         minHeight="20px"
         cols="50px"
         ref={ref}
@@ -117,6 +137,7 @@ function AutosizeTextarea() {
         }}
       ></Textarea>
       <Button
+        zIndex={1}
         pos="absolute"
         bottom="12px"
         right="12px"
@@ -128,16 +149,16 @@ function AutosizeTextarea() {
         minHeight="5px"
         width="5px"
         height="30px"
-        onClick={() => {
+        onClick={(e) =>
           // Define your button click event here
-          console.log("Button clicked");
-        }}
+          handleEnterButton(e)
+        }
         _hover={{ backgroundColor: "black" }}
       >
         <Icon as={MdArrowUpward} boxSize={5}></Icon>
       </Button>
     </Box>
   );
-}
+};
 
 export default StagingArea;
