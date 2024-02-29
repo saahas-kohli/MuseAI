@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Flex, Center } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/react";
 import { MdMoreHoriz, MdOutlineBrightnessLow } from "react-icons/md";
@@ -23,8 +23,25 @@ import {
 const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
   const [description, setDescription] = useState(todo.description);
   const [beingEdited, setBeingEdited] = useState(false);
+  const [zMoreButton, setZMoreButton] = useState(-1);
+  const containerRef = useRef(null);
 
-  //edit description function
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setZMoreButton(-1);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const updateDescription = async () => {
     try {
@@ -48,6 +65,7 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
     <Box>
       <Center>
         <Button
+          ref={containerRef}
           bg="#F9F8F8"
           w="90%"
           _hover={{ bg: "#EDECED" }}
@@ -60,8 +78,14 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
           _active={{
             bg: "#EFEFEF",
           }}
+          onMouseOver={() => {
+            if (zMoreButton !== 2) setZMoreButton(1);
+          }}
+          onMouseLeave={() => {
+            if (zMoreButton !== 2) setZMoreButton(-1);
+          }}
         >
-          <Box pos="absolute" left="0" padding="2">
+          <Box pos="absolute" left="0" padding="2" marginTop="4px">
             <Flex>
               <Box w="2px"></Box>
               <Box>
@@ -71,15 +95,20 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
                   onChange={(nextValue) => setDescription(nextValue)}
                   onSubmit={(finalValue) => updateDescription()}
                 >
-                  <EditablePreview />
+                  <EditablePreview maxWidth="177px" overflowX="hidden" />
                   <EditableInput />
                 </Editable>
               </Box>
             </Flex>
           </Box>
-          <Box pos="absolute" right="0" padding="2">
+          <Box pos="absolute" right="0" padding="2" zIndex={zMoreButton}>
             <Menu>
-              <MenuButton _focus={{ outline: "none" }}>
+              <MenuButton
+                _focus={{ outline: "none" }}
+                onClick={() => {
+                  setZMoreButton(2);
+                }}
+              >
                 <Icon as={MdMoreHoriz} boxSize={5} marginTop="6px"></Icon>
               </MenuButton>
               <MenuList>
