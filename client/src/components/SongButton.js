@@ -115,7 +115,7 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
                 <MenuItem
                   _hover={{ bg: "#EDECED" }}
                   _focus={{ outline: "none" }}
-                  onClick={() => setBeingEdited(true)}
+                  onClick={() => setZMoreButton(-1)}
                 >
                   Pin
                 </MenuItem>
