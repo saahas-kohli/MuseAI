@@ -106,7 +106,7 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
               <MenuButton
                 _focus={{ outline: "none" }}
                 onClick={() => {
-                  setZMoreButton(2);
+                  setZMoreButton(zMoreButton == 2 ? 1 : 2);
                 }}
               >
                 <Icon as={MdMoreHoriz} boxSize={5} marginTop="6px"></Icon>
@@ -115,7 +115,9 @@ const SongButton = ({ todo, listRender, setListRender, deleteFromList }) => {
                 <MenuItem
                   _hover={{ bg: "#EDECED" }}
                   _focus={{ outline: "none" }}
-                  onClick={() => setZMoreButton(-1)}
+                  onClick={() => {
+                    setZMoreButton(-1);
+                  }}
                 >
                   Pin
                 </MenuItem>
