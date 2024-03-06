@@ -51,7 +51,6 @@ const ListSongs = ({ listRender, setListRender }) => {
         .map((todo, i) => (
           <ListItem key={todo.todo_id}>
             <SongButton
-              hasTopPopper={i + 2 >= todos.length}
               todo={todo}
               listRender={listRender}
               setListRender={setListRender}

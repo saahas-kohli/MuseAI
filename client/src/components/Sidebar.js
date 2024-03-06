@@ -8,6 +8,8 @@ import { AddIcon } from "@chakra-ui/icons";
 import { Icon } from "@chakra-ui/react";
 import { MdLibraryMusic } from "react-icons/md";
 import React, { useState } from "react";
+import { IconButton } from "@chakra-ui/react";
+import { MdCellTower } from "react-icons/md";
 
 // components
 import ListSongs from "./ListSongs";
@@ -41,8 +43,6 @@ const Sidebar = () => {
           _hover={{ bg: "#EDECED" }}
           marginTop="5.7%"
           variant="ghost"
-          fontSize="14px"
-          fontWeight="bold"
           _focusVisible={{ boxShadow: "none" }}
           _active={{
             transform: "scale(0.98)",
@@ -50,10 +50,30 @@ const Sidebar = () => {
           onClick={addToList}
         >
           <Flex>
-            <Box marginTop="6px">Generate new song</Box>
-            <Box width="55px"></Box>
             <Box>
-              <Icon as={MdLibraryMusic} w={5} h={5} marginTop="25%"></Icon>
+              <IconButton
+                backgroundColor="white"
+                style={{
+                  border: "1px solid #e4e4e4",
+                }}
+                isRound
+                _hover={{}}
+                size="sm"
+                fontSize="18px"
+                icon={<MdCellTower />}
+              ></IconButton>
+            </Box>
+            <Box
+              fontSize="13.25px"
+              fontWeight="630"
+              letterSpacing="-0.02em"
+              marginLeft="9px"
+              marginTop="8px"
+            >
+              New song
+            </Box>
+            <Box pos="absolute" right="10px" marginTop="5px">
+              <Icon as={MdLibraryMusic} w={5} h={5}></Icon>
             </Box>
           </Flex>
         </Button>

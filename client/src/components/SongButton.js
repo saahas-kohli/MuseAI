@@ -19,10 +19,21 @@ import {
   EditablePreview,
   useEditableControls,
 } from "@chakra-ui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+  useDisclosure,
+} from "@chakra-ui/react";
 
 const SongButton = ({
   todo,
-  hasTopPopper,
   listRender,
   setListRender,
   deleteFromList,
@@ -33,9 +44,17 @@ const SongButton = ({
   const [beingEdited, setBeingEdited] = useState(false);
   const [zMoreButton, setZMoreButton] = useState(-1);
   const [previewFocusable, setPreviewFocusable] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const containerRef = useRef(null);
   const editableRef = useRef(null);
   const previewRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && !isHovered) {
+      onClose();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleMouseDownOutside = (event) => {
@@ -81,6 +100,7 @@ const SongButton = ({
           setSelectedSong(todo.todo_id);
         }}
         width="90%"
+        height="37px"
         justifyContent={"flex-start"}
         ref={containerRef}
         bg={
@@ -94,6 +114,7 @@ const SongButton = ({
         variant="ghost"
         fontSize="14px"
         fontWeight={440}
+        letterSpacing="-0.01em"
         _focusVisible={{ boxShadow: "none" }}
         _active={{}}
         onMouseOver={() => {
@@ -114,9 +135,6 @@ const SongButton = ({
                 selectAllOnFocus={false}
                 onChange={(nextValue) => setDescription(nextValue)}
                 onSubmit={() => updateDescription()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
                 onKeyDown={(e) => {
                   if (
                     e.key === " " &&
@@ -135,64 +153,93 @@ const SongButton = ({
               </Editable>
             </Box>
           </Flex>
-          <Box
-            pos="absolute"
-            right="11px"
-            marginTop="7px"
-            zIndex={selectedSong === todo.todo_id ? 1 : zMoreButton}
+          <Popover
+            trigger="hover"
+            placement="top"
+            arrowShadowColor="black"
+            openDelay={325}
+            closeDelay={1}
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
           >
-            <Menu>
-              <MenuButton
-                _focus={{ outline: "none" }}
-                onClick={(e) => {
-                  setZMoreButton(zMoreButton === 2 ? 1 : 2);
-                  e.stopPropagation();
-                }}
-              >
-                <Icon as={MdMoreHoriz} boxSize={5}></Icon>
-              </MenuButton>
-              <MenuList>
-                <MenuItem
-                  _hover={{ bg: "#EDECED" }}
-                  _focus={{ outline: "none" }}
-                  onClick={(e) => {
-                    setZMoreButton(-1);
-                    e.stopPropagation();
-                  }}
-                >
-                  Pin
-                </MenuItem>
-                <MenuItem
-                  _hover={{ bg: "#EDECED" }}
-                  _focus={{ outline: "none" }}
-                  onClick={(e) => {
-                    setPreviewFocusable(true);
-                    setZMoreButton(-1);
+            <Box
+              pos="absolute"
+              right="11px"
+              marginTop="7px"
+              zIndex={selectedSong === todo.todo_id ? 1 : zMoreButton}
+            >
+              <Menu>
+                <PopoverTrigger>
+                  <MenuButton
+                    _focus={{ outline: "none" }}
+                    onClick={(e) => {
+                      setZMoreButton(zMoreButton === 2 ? 1 : 2);
+                      e.stopPropagation();
+                    }}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <Icon as={MdMoreHoriz} boxSize={5}></Icon>
+                  </MenuButton>
+                </PopoverTrigger>
 
-                    setTimeout(() => {
-                      if (previewRef.current) {
-                        previewRef.current.focus();
-                      }
-                    }, 200);
+                <MenuList width="105%" marginTop="-5px">
+                  <MenuItem
+                    _hover={{ bg: "#EDECED" }}
+                    _focus={{ outline: "none" }}
+                    onClick={(e) => {
+                      setZMoreButton(-1);
+                      e.stopPropagation();
+                    }}
+                  >
+                    Pin
+                  </MenuItem>
+                  <MenuItem
+                    _hover={{ bg: "#EDECED" }}
+                    _focus={{ outline: "none" }}
+                    onClick={(e) => {
+                      setPreviewFocusable(true);
+                      setZMoreButton(-1);
 
-                    e.stopPropagation();
-                  }}
-                >
-                  Edit
-                </MenuItem>
-                <MenuItem
-                  _hover={{ bg: "#EDECED" }}
-                  _focus={{ outline: "none" }}
-                  onClick={(e) => {
-                    deleteFromList(todo.todo_id);
-                    e.stopPropagation();
-                  }}
-                >
-                  Delete
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
+                      setTimeout(() => {
+                        if (previewRef.current) {
+                          previewRef.current.focus();
+                        }
+                      }, 200);
+
+                      e.stopPropagation();
+                    }}
+                  >
+                    Rename
+                  </MenuItem>
+                  <MenuItem
+                    _hover={{ bg: "#EDECED" }}
+                    _focus={{ outline: "none" }}
+                    onClick={(e) => {
+                      deleteFromList(todo.todo_id);
+                      e.stopPropagation();
+                    }}
+                  >
+                    Delete song
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+            <PopoverContent
+              bg="black"
+              textColor="white"
+              borderColor="black"
+              maxWidth="50px"
+              fontSize="11px"
+              fontWeight="bold"
+            >
+              <PopoverArrow bg="black" />
+              <PopoverBody>
+                <Center>More</Center>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Flex>
       </Button>
     </Box>
