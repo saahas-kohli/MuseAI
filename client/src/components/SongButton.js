@@ -32,6 +32,7 @@ const SongButton = ({
   const [description, setDescription] = useState(todo.description);
   const [beingEdited, setBeingEdited] = useState(false);
   const [zMoreButton, setZMoreButton] = useState(-1);
+  const [previewFocusable, setPreviewFocusable] = useState(false);
   const containerRef = useRef(null);
   const editableRef = useRef(null);
   const previewRef = useRef(null);
@@ -43,7 +44,6 @@ const SongButton = ({
         !containerRef.current.contains(event.target)
       ) {
         setZMoreButton(-1);
-        //console.log("Hi");
       }
     };
 
@@ -56,8 +56,7 @@ const SongButton = ({
 
   const updateDescription = async () => {
     try {
-      console.log("Hmm");
-      //setPreviewFocusable(false);
+      setPreviewFocusable(false);
       const body = { description };
       const response = await fetch(
         `http://localhost:9000/todos/${todo.todo_id}`,
@@ -73,13 +72,6 @@ const SongButton = ({
       console.error(err.message);
     }
   };
-  /*
-  useEffect(() => {
-    if (previewFocusable) {
-      previewRef.current.focus();
-    }
-  }, [previewFocusable]);
-  */
 
   return (
     <Box marginLeft="4.5%" width="100%">
@@ -115,6 +107,7 @@ const SongButton = ({
           <Flex marginTop="4px">
             <Box>
               <Editable
+                isPreviewFocusable={previewFocusable}
                 ref={editableRef}
                 defaultValue={todo.description}
                 placeholder={"Unnamed song"}
@@ -173,11 +166,14 @@ const SongButton = ({
                   _hover={{ bg: "#EDECED" }}
                   _focus={{ outline: "none" }}
                   onClick={(e) => {
+                    setPreviewFocusable(true);
                     setZMoreButton(-1);
 
-                    if (previewRef.current) {
-                      previewRef.current.focus();
-                    }
+                    setTimeout(() => {
+                      if (previewRef.current) {
+                        previewRef.current.focus();
+                      }
+                    }, 200);
 
                     e.stopPropagation();
                   }}
