@@ -9,7 +9,7 @@ import { Textarea } from "@chakra-ui/react";
 import { MdArrowUpward } from "react-icons/md";
 import { Icon } from "@chakra-ui/react";
 
-function StagingArea() {
+const StagingArea = () => {
   const [enteredDesc, setEnteredDesc] = useState("");
   return (
     <Box
@@ -25,7 +25,7 @@ function StagingArea() {
       />
     </Box>
   );
-}
+};
 
 const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
   const ref = useRef(null);

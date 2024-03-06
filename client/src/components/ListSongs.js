@@ -12,6 +12,7 @@ import SongButton from "./SongButton";
 
 const ListSongs = ({ listRender, setListRender }) => {
   const [todos, setTodos] = useState([]);
+  const [selectedSong, setSelectedSong] = useState(-1);
 
   //delete function
   const deleteFromList = async (id) => {
@@ -47,13 +48,16 @@ const ListSongs = ({ listRender, setListRender }) => {
         .sort((a, b) => {
           return a.todo_id > b.todo_id ? 1 : -1;
         })
-        .map((todo) => (
+        .map((todo, i) => (
           <ListItem key={todo.todo_id}>
             <SongButton
+              hasTopPopper={i + 2 >= todos.length}
               todo={todo}
               listRender={listRender}
               setListRender={setListRender}
               deleteFromList={deleteFromList}
+              selectedSong={selectedSong}
+              setSelectedSong={setSelectedSong}
             />
           </ListItem>
         ))}
