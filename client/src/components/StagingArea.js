@@ -1,4 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, useColorModeValue } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Flex, Spacer } from "@chakra-ui/react";
@@ -10,6 +10,18 @@ import { MdArrowUpward } from "react-icons/md";
 import { Icon } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { IconButton } from "@chakra-ui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+  useDisclosure,
+} from "@chakra-ui/react";
 
 const StagingArea = () => {
   const [enteredDesc, setEnteredDesc] = useState("");
@@ -33,6 +45,11 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
   const [buttonDarkened, setButtonDarkened] = useState(false);
+
+  const textareaShadow = useColorModeValue(
+    "0 2px 4px rgba(0, 0, 0, 0.1)",
+    "0 2px 4px rgba(255, 255, 255, 0.1)"
+  );
 
   useEffect(() => {
     const textarea = ref.current;
@@ -77,28 +94,26 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
         minHeight="20px"
         ref={ref}
         placeholder="Enter song description..."
-        _placeholder={{
-          color: "gray.500",
-          fontWeight: "medium",
-        }}
         color="black"
-        fontWeight="normal"
+        fontWeight={420}
         borderRadius="15px"
-        borderColor="gray.300"
+        borderColor="#D8D9D8"
         _focus={{
-          borderColor: "gray.300",
+          borderColor: "#BEBEBF",
           outline: "none",
-          boxShadow: "0 0 2px rgba(128, 128, 128, 0.5)",
+          boxShadow: textareaShadow,
         }}
         lineHeight="normal"
+        letterSpacing="-0.01em"
         paddingTop="17px"
         paddingBottom="17px"
         fontSize="16px"
         overflow="hidden"
         sx={{
           "&::placeholder": {
-            color: "gray.500",
-            fontWeight: "medium",
+            color: "#7E7F7E",
+            fontWeight: "normal",
+            letterSpacing: "-0.01em",
           },
           "&": {
             resize: "none",
@@ -106,18 +121,44 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
           flex: 1, // Make Textarea flexible to fill the container
         }}
       ></Textarea>
-      <IconButton
-        marginLeft="10px"
-        backgroundColor={buttonDarkened ? "black" : "#E5E4E4"}
-        textColor="white"
-        size="md"
-        isRound
-        onClick={() => handleEnterButton()}
-        _hover={{}}
-        icon={<ArrowUpIcon />}
-        fontSize="25px"
-        aria-label="Upload text"
-      ></IconButton>
+      <Popover
+        trigger="hover"
+        placement="top"
+        arrowShadowColor="black"
+        openDelay={0}
+        closeDelay={0}
+      >
+        <PopoverTrigger>
+          <IconButton
+            marginLeft="10px"
+            backgroundColor={buttonDarkened ? "black" : "#E5E4E4"}
+            textColor="white"
+            size="md"
+            isRound
+            onClick={() => handleEnterButton()}
+            _hover={{}}
+            icon={<ArrowUpIcon />}
+            fontSize="25px"
+            aria-label="Upload text"
+            _active={{}}
+          ></IconButton>
+        </PopoverTrigger>
+        <PopoverContent
+          bg="black"
+          textColor="white"
+          borderColor="black"
+          maxWidth="140px"
+          maxHeight="40px"
+          fontSize="13px"
+          fontWeight="bold"
+          marginBottom="4px"
+        >
+          <PopoverArrow bg="black" />
+          <PopoverBody>
+            <Center>Send description</Center>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
     </Box>
   );
 };
