@@ -23,6 +23,88 @@ import {
 
 const StagingArea = () => {
   const [enteredDesc, setEnteredDesc] = useState("");
+  const [ws, setWs] = useState(null);
+  const canvas = useRef(null);
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    const newWs = new WebSocket("ws://localhost:6789");
+
+    newWs.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log(data.output.slice(0, 20));
+      // Handle received message
+      const ctx = canvas.current.getContext("2d");
+      // canvas.current.width = window.innerWidth;
+      // canvas.current.height = window.innerHeight;
+      canvas.current.width = 800;
+      canvas.current.height = 400;
+      let audioSource;
+      let analyser;
+      let audio1 = new Audio("data:audio/x-wav;base64," + data.output);
+      const audioCtx = new AudioContext();
+      audio1.play();
+      audioSource = audioCtx.createMediaElementSource(audio1);
+      analyser = audioCtx.createAnalyser();
+      audioSource.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.fftSize = 64;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      const barWidth = canvas.current.width / bufferLength;
+      let barHeight;
+      let x;
+
+      function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = dataArray[i] * 1000;
+          // const red = i * barHeight/20;
+          // const green = i * 4;
+          // const blue = barHeight/2;
+          const red = 100;
+          const green = 0;
+          const blue = 0;
+          ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
+          // console.log('barWidth' + barWidth);
+          // console.log('barHeight' + barHeight);
+          ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+          x += barWidth;
+        }
+      }
+
+      function animate() {
+        console.log("Animate was run");
+        // x = 0;
+        x = 1000;
+        ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+        analyser.getByteFrequencyData(dataArray);
+        console.log(dataArray);
+        drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    };
+
+    setWs(newWs);
+
+    // Cleanup on component unmount
+    return () => {
+      if (newWs) {
+        newWs.close();
+      }
+    };
+  }, []);
+
+  const runMusicGen = (musicDescription) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      const data = { prompt: musicDescription };
+      ws.send(JSON.stringify(data));
+    } else {
+      console.error("WebSocket is not connected.");
+    }
+  };
+
   return (
     <Box>
       <Box pos="absolute" right="0">
@@ -38,16 +120,21 @@ const StagingArea = () => {
         marginLeft="15.75%"
         marginBottom={8}
       >
+        <div id="container">
+          <canvas ref={canvas}></canvas>
+          <audio controls></audio>
+        </div>
         <AutosizeTextarea
           enteredDesc={enteredDesc}
           setEnteredDesc={setEnteredDesc}
+          runMusicGen={runMusicGen}
         />
       </Box>
     </Box>
   );
 };
 
-const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
+const AutosizeTextarea = ({ enteredDesc, setEnteredDesc, runMusicGen }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
   const [buttonDarkened, setButtonDarkened] = useState(false);
@@ -74,6 +161,7 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
       e.preventDefault();
       const textarea = ref.current;
       setEnteredDesc(textarea.value);
+      runMusicGen(textarea.value);
       textarea.value = "";
       setButtonDarkened(false);
     }
@@ -82,6 +170,7 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
   const handleEnterButton = () => {
     const textarea = ref.current;
     setEnteredDesc(textarea.value);
+    runMusicGen(textarea.value);
     textarea.value = "";
     setButtonDarkened(false);
   };
