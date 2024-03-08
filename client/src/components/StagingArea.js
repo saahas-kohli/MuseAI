@@ -64,30 +64,35 @@ const StagingArea = () => {
       let barHeight;
       let x;
 
-      function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray){
-        for (let i = 0; i < bufferLength; i++){
-            barHeight = dataArray[i];
-            const red = i * barHeight/20;
-            const green = i * 4;
-            const blue = barHeight/2;
-            ctx.fillStyle = 'rgb(' + red + ',' + green + ',' + blue + ')';
-            // console.log('barWidth' + barWidth);
-            // console.log('barHeight' + barHeight);
-            // ctx.fillRect(x, -(canvas.height - barHeight), barWidth, barHeight);
-            ctx.fillRect(x, canvas.current.height - barHeight, barWidth, barHeight);
-            x += barWidth;
+      function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = dataArray[i];
+          const red = (i * barHeight) / 20;
+          const green = i * 4;
+          const blue = barHeight / 2;
+          ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
+          // console.log('barWidth' + barWidth);
+          // console.log('barHeight' + barHeight);
+          // ctx.fillRect(x, -(canvas.height - barHeight), barWidth, barHeight);
+          ctx.fillRect(
+            x,
+            canvas.current.height - barHeight,
+            barWidth,
+            barHeight
+          );
+          x += barWidth;
         }
       }
 
-      function animate(){
-          console.log('Animate was run');
-          // x = 0;
-          x = 0;
-          ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
-          analyser.getByteFrequencyData(dataArray);
-          console.log(dataArray);
-          drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray);
-          requestAnimationFrame(animate);
+      function animate() {
+        console.log("Animate was run");
+        // x = 0;
+        x = 0;
+        ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+        analyser.getByteFrequencyData(dataArray);
+        console.log(dataArray);
+        drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray);
+        requestAnimationFrame(animate);
       }
       animate();
     };
