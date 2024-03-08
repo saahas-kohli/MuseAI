@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@chakra-ui/react";
-import {
-  List,
-  ListItem,
-  ListIcon,
-  OrderedList,
-  UnorderedList,
-} from "@chakra-ui/react";
+import { List, ListItem } from "@chakra-ui/react";
 
 import SongButton from "./SongButton";
 

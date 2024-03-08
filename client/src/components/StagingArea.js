@@ -1,14 +1,14 @@
-import { ChakraProvider, useColorModeValue } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
+import { Box, Switch } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Flex, Spacer } from "@chakra-ui/react";
-import { Container, Center, AbsoluteCenter } from "@chakra-ui/react";
+import { Container, Center } from "@chakra-ui/react";
 import autosize from "autosize";
 import React, { useRef, useState, useEffect } from "react";
 import { Textarea } from "@chakra-ui/react";
-import { MdArrowUpward } from "react-icons/md";
-import { Icon } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import { IconButton } from "@chakra-ui/react";
 import {
   Popover,
@@ -30,13 +30,13 @@ const StagingArea = () => {
 
   useEffect(() => {
     // Initialize WebSocket connection
-    const newWs = new WebSocket('ws://localhost:6789');
+    const newWs = new WebSocket("ws://localhost:6789");
 
     newWs.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data.output.slice(0,20));
+      console.log(data.output.slice(0, 20));
       // Handle received message
-      const ctx = canvas.current.getContext('2d');
+      const ctx = canvas.current.getContext("2d");
       // canvas.current.width = window.innerWidth;
       // canvas.current.height = window.innerHeight;
       canvas.current.width = 800;
@@ -45,7 +45,7 @@ const StagingArea = () => {
       // ctx.fillRect(0, 0, 100, 100);
       let audioSource;
       let analyser;
-      let audio1 = new Audio('data:audio/x-wav;base64,' + data.output);
+      let audio1 = new Audio("data:audio/x-wav;base64," + data.output);
       const audioCtx = new AudioContext();
       audio1.play();
       audioSource = audioCtx.createMediaElementSource(audio1);
@@ -56,7 +56,7 @@ const StagingArea = () => {
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
 
-      const barWidth = canvas.current.width/bufferLength;
+      const barWidth = canvas.current.width / bufferLength;
       let barHeight;
       let x;
 
@@ -73,7 +73,7 @@ const StagingArea = () => {
             ctx.fillRect(x, canvas.current.height - barHeight, barWidth, barHeight);
             x += barWidth;
         }
-      } 
+      }
 
       function animate(){
           console.log('Animate was run');
@@ -103,27 +103,80 @@ const StagingArea = () => {
       const data = { prompt: musicDescription };
       ws.send(JSON.stringify(data));
     } else {
-      console.error('WebSocket is not connected.');
+      console.error("WebSocket is not connected.");
     }
   };
 
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
-    <Box
-      pos="absolute"
-      bottom="0"
-      width="50.75%"
-      marginLeft="15.75%"
-      marginBottom={8}
-    >
-      <div id="container">
-        <canvas ref={canvas}></canvas>
-        <audio controls></audio>
-      </div>
-      <AutosizeTextarea
-        enteredDesc={enteredDesc}
-        setEnteredDesc={setEnteredDesc}
-        runMusicGen={runMusicGen}
-      />
+    <Box>
+      <Flex>
+        <Box
+          pos="relative"
+          left="0"
+          marginTop="15px"
+          marginLeft="21px"
+          fontWeight="semibold"
+          fontSize="18px"
+        >
+          MuseAI
+        </Box>
+        <Box
+          marginTop="15px"
+          marginLeft="5px"
+          fontWeight="semibold"
+          fontSize="18px"
+          color="#676666"
+        >
+          Beta
+        </Box>
+        <IconButton
+          icon={<FaChevronDown />}
+          size="xs"
+          marginTop="17px"
+          background="transparent"
+          textColor="#9A9B9A"
+          _hover={{}}
+          _active={{}}
+        ></IconButton>
+        <Box pos="absolute" right="0" marginTop="7.5px" marginRight="12px">
+          <IconButton
+            variant="solid"
+            aria-label="color-mode icon"
+            background={"transparent"}
+            _hover={{
+              background: darkMode ? "#2D303D" : "#EDF3F7",
+            }}
+            _active={{
+              transform: "scale(0.95)",
+            }}
+            fontSize={darkMode ? "23px" : "18px"}
+            textColor={"#A1AEC1"}
+            borderRadius="5.5px"
+            onClick={() => setDarkMode(!darkMode)}
+            icon={darkMode ? <FaSun></FaSun> : <FaMoon></FaMoon>}
+          />
+        </Box>
+      </Flex>
+
+      <Box
+        pos="absolute"
+        bottom="0"
+        width="50.75%"
+        marginLeft="15.75%"
+        marginBottom={8}
+      >
+        <Box>
+          <canvas ref={canvas}></canvas>
+          <audio controls></audio>
+        </Box>
+        <AutosizeTextarea
+          enteredDesc={enteredDesc}
+          setEnteredDesc={setEnteredDesc}
+          runMusicGen={runMusicGen}
+        />
+      </Box>
     </Box>
   );
 };
@@ -214,8 +267,8 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc, runMusicGen }) => {
         trigger="hover"
         placement="top"
         arrowShadowColor="black"
-        openDelay={0}
-        closeDelay={0}
+        openDelay={325}
+        closeDelay={1}
       >
         <PopoverTrigger>
           <IconButton
