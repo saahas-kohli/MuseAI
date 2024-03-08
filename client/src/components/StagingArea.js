@@ -29,6 +29,10 @@ const StagingArea = () => {
   const canvas = useRef(null);
 
   useEffect(() => {
+    console.log(enteredDesc);
+  }, [enteredDesc]);
+
+  useEffect(() => {
     // Initialize WebSocket connection
     const newWs = new WebSocket("ws://localhost:6789");
 
