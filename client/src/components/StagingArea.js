@@ -1,14 +1,12 @@
-import { ChakraProvider, useColorModeValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Flex, Spacer } from "@chakra-ui/react";
-import { Container, Center, AbsoluteCenter } from "@chakra-ui/react";
+import { Container, Center } from "@chakra-ui/react";
 import autosize from "autosize";
 import React, { useRef, useState, useEffect } from "react";
 import { Textarea } from "@chakra-ui/react";
-import { MdArrowUpward } from "react-icons/md";
-import { Icon } from "@chakra-ui/react";
-import { ArrowUpIcon } from "@chakra-ui/icons";
+import { ArrowUpIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { IconButton } from "@chakra-ui/react";
 import {
   Popover,
@@ -26,17 +24,25 @@ import {
 const StagingArea = () => {
   const [enteredDesc, setEnteredDesc] = useState("");
   return (
-    <Box
-      pos="absolute"
-      bottom="0"
-      width="50.75%"
-      marginLeft="15.75%"
-      marginBottom={8}
-    >
-      <AutosizeTextarea
-        enteredDesc={enteredDesc}
-        setEnteredDesc={setEnteredDesc}
-      />
+    <Box>
+      <Box pos="absolute" right="0">
+        <IconButton
+          aria-label="light/dark mode switch"
+          icon={<MoonIcon></MoonIcon>}
+        ></IconButton>
+      </Box>
+      <Box
+        pos="absolute"
+        bottom="0"
+        width="50.75%"
+        marginLeft="15.75%"
+        marginBottom={8}
+      >
+        <AutosizeTextarea
+          enteredDesc={enteredDesc}
+          setEnteredDesc={setEnteredDesc}
+        />
+      </Box>
     </Box>
   );
 };
@@ -125,8 +131,8 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc }) => {
         trigger="hover"
         placement="top"
         arrowShadowColor="black"
-        openDelay={0}
-        closeDelay={0}
+        openDelay={325}
+        closeDelay={1}
       >
         <PopoverTrigger>
           <IconButton

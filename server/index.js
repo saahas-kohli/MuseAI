@@ -13,10 +13,11 @@ app.use(express.json());
 
 app.post("/todos", async (req, res) => {
   try {
-    const { description } = req.body;
+    const { defaultDescription } =
+      req.body; /* this variable must have the same name as whatever key is in req.body! */
     const newTodo = await pool.query(
       "INSERT INTO todo (description) VALUES($1) RETURNING *",
-      [description]
+      [defaultDescription]
     );
     res.json(newTodo.rows[0]);
   } catch (err) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Button, Flex, Center, Spacer, css } from "@chakra-ui/react";
+import { Box, Button, Flex, Center } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/react";
-import { MdMoreHoriz, MdOutlineBrightnessLow } from "react-icons/md";
+import { MdMoreHoriz } from "react-icons/md";
 import {
   Menu,
   MenuButton,
@@ -50,11 +50,6 @@ const SongButton = ({
   const editableRef = useRef(null);
   const previewRef = useRef(null);
 
-  const inputStyles = css({
-    zIndex: 999, // Set your desired zIndex value
-    // Add any other custom styles as needed
-  });
-
   useEffect(() => {
     if (isOpen && !isHovered) {
       onClose();
@@ -84,6 +79,7 @@ const SongButton = ({
     try {
       setPreviewFocusable(false);
       const body = { description };
+
       const response = await fetch(
         `http://localhost:9000/todos/${todo.todo_id}`,
         {
@@ -93,7 +89,9 @@ const SongButton = ({
         }
       );
       setBeingEdited(false);
-      setListRender(!listRender);
+      setListRender(
+        !listRender
+      ); /* not actually re-rendering list, maybe since it's not state variable of this component? */
     } catch (err) {
       console.error(err.message);
     }
@@ -133,7 +131,21 @@ const SongButton = ({
         }}
       >
         <Flex>
-          <Flex marginTop="4px" marginLeft="-8.5px">
+          <Flex
+            minWidth="190px"
+            marginTop="4px"
+            marginLeft="-8.5px"
+            onDoubleClick={() => {
+              setPreviewFocusable(true);
+              setZMoreButton(-1);
+
+              setTimeout(() => {
+                if (previewRef.current) {
+                  previewRef.current.focus();
+                }
+              }, 200);
+            }}
+          >
             <Editable
               isPreviewFocusable={previewFocusable}
               ref={editableRef}
@@ -141,11 +153,14 @@ const SongButton = ({
               placeholder={"Unnamed song"}
               selectAllOnFocus={false}
               onChange={(nextValue) => setDescription(nextValue)}
-              onSubmit={() => updateDescription()}
+              onSubmit={() => {
+                updateDescription();
+              }}
               onKeyDown={(e) => {
                 if (
                   e.key === " " &&
-                  editableRef.current.textContent === "Unnamed song"
+                  editableRef.current.textContent === "Unnamed song" &&
+                  description !== "Unnamed song"
                 ) {
                   e.preventDefault();
                 }
@@ -156,18 +171,6 @@ const SongButton = ({
                 overflowX="hidden"
                 ref={previewRef}
                 style={{ cursor: "pointer" }}
-                onDoubleClick={(e) => {
-                  setPreviewFocusable(true);
-                  setZMoreButton(-1);
-
-                  setTimeout(() => {
-                    if (previewRef.current) {
-                      previewRef.current.focus();
-                    }
-                  }, 200);
-
-                  //e.stopPropagation();
-                }}
               />
               <EditableInput
                 width="185px"
@@ -180,6 +183,7 @@ const SongButton = ({
                   boxShadow: "none",
                 }}
                 borderRadius="0"
+                backgroundColor="#EDECED"
               />
             </Editable>
           </Flex>
@@ -196,7 +200,13 @@ const SongButton = ({
             <Box
               pos="absolute"
               right="11px"
-              marginTop="7px"
+              marginTop={
+                description.length !== 0 && description.trim() === ""
+                  ? previewFocusable
+                    ? "7px"
+                    : "1.5px"
+                  : "7px"
+              }
               zIndex={selectedSong === todo.todo_id ? 1 : zMoreButton}
             >
               <Menu>

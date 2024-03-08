@@ -1,10 +1,8 @@
 // libraries
-import { ChakraProvider } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Flex, Spacer } from "@chakra-ui/react";
 import { Container, Center } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import { Icon } from "@chakra-ui/react";
 import { MdLibraryMusic } from "react-icons/md";
 import React, { useState } from "react";
@@ -16,11 +14,11 @@ import ListSongs from "./ListSongs";
 
 const Sidebar = () => {
   const [listRender, setListRender] = useState(true);
+  const [defaultDescription, setDefaultDescription] = useState("");
 
   const addToList = async (e) => {
     e.preventDefault();
     try {
-      const defaultDescription = "Unnamed song";
       const body = { defaultDescription };
       const response = await fetch("http://localhost:9000/todos", {
         method: "POST",
@@ -38,6 +36,7 @@ const Sidebar = () => {
       className="custom-scrollbar"
       overflowY="scroll"
       maxHeight="650px"
+      minHeight="650px"
       overflowX="hidden"
       width="100%"
     >
