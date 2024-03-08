@@ -34,10 +34,17 @@ const Sidebar = () => {
     }
   };
   return (
-    <Box overflowY="scroll" maxHeight="650px" overflowX="hidden" width="100%">
-      <Box position="sticky" top="0" zIndex={1} marginLeft="4.5%" width="100%">
+    <Box
+      className="custom-scrollbar"
+      overflowY="scroll"
+      maxHeight="650px"
+      overflowX="hidden"
+      width="100%"
+    >
+      <Box position="sticky" top="0" zIndex={1} marginLeft="4.75%" width="100%">
         <Button
-          width="90%"
+          width="92.25%"
+          borderRadius="8.5px"
           justifyContent="flex-start"
           bg="#F9F8F8"
           _hover={{ bg: "#EDECED" }}
@@ -49,7 +56,7 @@ const Sidebar = () => {
           }}
           onClick={addToList}
         >
-          <Flex>
+          <Flex marginLeft="-8.5px">
             <Box>
               <IconButton
                 backgroundColor="white"

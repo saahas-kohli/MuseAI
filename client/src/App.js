@@ -23,8 +23,10 @@ function App() {
   return (
     <ChakraProvider theme={theme}>
       <Flex>
-        <Box bg="#F9F8F8" w={0.172} h="calc(100vh)">
-          <Sidebar></Sidebar>
+        <Box className="sidebar" bg="#F9F8F8" w={0.172} h="calc(100vh)">
+          <Box marginRight="4px">
+            <Sidebar></Sidebar>
+          </Box>
         </Box>
         <Box flex="1" bg="" h="calc(100vh)">
           <StagingArea />

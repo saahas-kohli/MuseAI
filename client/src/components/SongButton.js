@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Button, Flex, Center, Spacer } from "@chakra-ui/react";
+import { Box, Button, Flex, Center, Spacer, css } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/react";
 import { MdMoreHoriz, MdOutlineBrightnessLow } from "react-icons/md";
 import {
@@ -50,8 +50,15 @@ const SongButton = ({
   const editableRef = useRef(null);
   const previewRef = useRef(null);
 
+  const inputStyles = css({
+    zIndex: 999, // Set your desired zIndex value
+    // Add any other custom styles as needed
+  });
+
   useEffect(() => {
     if (isOpen && !isHovered) {
+      onClose();
+    } else if (zMoreButton === 2) {
       onClose();
     }
   }, [isOpen]);
@@ -93,14 +100,15 @@ const SongButton = ({
   };
 
   return (
-    <Box marginLeft="4.5%" width="100%">
+    <Box marginLeft="4.75%" width="100%">
       <Button
         onKeyUp={(e) => e.preventDefault()}
         onClick={() => {
           setSelectedSong(todo.todo_id);
         }}
-        width="90%"
-        height="37px"
+        width="92.25%"
+        height="36px"
+        borderRadius="8.5px"
         justifyContent={"flex-start"}
         ref={containerRef}
         bg={
@@ -125,33 +133,55 @@ const SongButton = ({
         }}
       >
         <Flex>
-          <Flex marginTop="4px">
-            <Box>
-              <Editable
-                isPreviewFocusable={previewFocusable}
-                ref={editableRef}
-                defaultValue={todo.description}
-                placeholder={"Unnamed song"}
-                selectAllOnFocus={false}
-                onChange={(nextValue) => setDescription(nextValue)}
-                onSubmit={() => updateDescription()}
-                onKeyDown={(e) => {
-                  if (
-                    e.key === " " &&
-                    editableRef.current.textContent === "Unnamed song"
-                  ) {
-                    e.preventDefault();
-                  }
+          <Flex marginTop="4px" marginLeft="-8.5px">
+            <Editable
+              isPreviewFocusable={previewFocusable}
+              ref={editableRef}
+              defaultValue={todo.description}
+              placeholder={"Unnamed song"}
+              selectAllOnFocus={false}
+              onChange={(nextValue) => setDescription(nextValue)}
+              onSubmit={() => updateDescription()}
+              onKeyDown={(e) => {
+                if (
+                  e.key === " " &&
+                  editableRef.current.textContent === "Unnamed song"
+                ) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              <EditablePreview
+                maxWidth="177px"
+                overflowX="hidden"
+                ref={previewRef}
+                style={{ cursor: "pointer" }}
+                onDoubleClick={(e) => {
+                  setPreviewFocusable(true);
+                  setZMoreButton(-1);
+
+                  setTimeout(() => {
+                    if (previewRef.current) {
+                      previewRef.current.focus();
+                    }
+                  }, 200);
+
+                  //e.stopPropagation();
                 }}
-              >
-                <EditablePreview
-                  maxWidth="177px"
-                  overflowX="hidden"
-                  ref={previewRef}
-                />
-                <EditableInput marginBottom="3px" />
-              </Editable>
-            </Box>
+              />
+              <EditableInput
+                width="185px"
+                maxHeight="26px"
+                marginTop="-0.5px"
+                marginBottom="2px"
+                marginLeft="-3px"
+                style={{
+                  border: "2px solid #2562EB",
+                  boxShadow: "none",
+                }}
+                borderRadius="0"
+              />
+            </Editable>
           </Flex>
           <Popover
             trigger="hover"
@@ -184,7 +214,7 @@ const SongButton = ({
                   </MenuButton>
                 </PopoverTrigger>
 
-                <MenuList width="105%" marginTop="-5px">
+                <MenuList width="102%" marginTop="-5px" marginLeft="-5.35%">
                   <MenuItem
                     _hover={{ bg: "#EDECED" }}
                     _focus={{ outline: "none" }}
