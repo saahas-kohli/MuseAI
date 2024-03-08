@@ -25,7 +25,7 @@ function App() {
             <Sidebar></Sidebar>
           </Box>
         </Box>
-        <Box flex="1" bg="" h="calc(100vh)">
+        <Box w={0.828} bg="" h="calc(100vh)">
           <StagingArea />
         </Box>
       </Flex>

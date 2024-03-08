@@ -1,12 +1,14 @@
 import { useColorModeValue } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/react";
+import { Box, Switch } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Flex, Spacer } from "@chakra-ui/react";
 import { Container, Center } from "@chakra-ui/react";
 import autosize from "autosize";
 import React, { useRef, useState, useEffect } from "react";
 import { Textarea } from "@chakra-ui/react";
-import { ArrowUpIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { ArrowUpIcon } from "@chakra-ui/icons";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import { IconButton } from "@chakra-ui/react";
 import {
   Popover,
@@ -105,14 +107,59 @@ const StagingArea = () => {
     }
   };
 
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
     <Box>
-      <Box pos="absolute" right="0">
+      <Flex>
+        <Box
+          pos="relative"
+          left="0"
+          marginTop="15px"
+          marginLeft="21px"
+          fontWeight="semibold"
+          fontSize="18px"
+        >
+          MuseAI
+        </Box>
+        <Box
+          marginTop="15px"
+          marginLeft="5px"
+          fontWeight="semibold"
+          fontSize="18px"
+          color="#676666"
+        >
+          Beta
+        </Box>
         <IconButton
-          aria-label="light/dark mode switch"
-          icon={<MoonIcon></MoonIcon>}
+          icon={<FaChevronDown />}
+          size="xs"
+          marginTop="17px"
+          background="transparent"
+          textColor="#9A9B9A"
+          _hover={{}}
+          _active={{}}
         ></IconButton>
-      </Box>
+        <Box pos="absolute" right="0" marginTop="7.5px" marginRight="12px">
+          <IconButton
+            variant="solid"
+            aria-label="color-mode icon"
+            background={"transparent"}
+            _hover={{
+              background: darkMode ? "#2D303D" : "#EDF3F7",
+            }}
+            _active={{
+              transform: "scale(0.95)",
+            }}
+            fontSize={darkMode ? "23px" : "18px"}
+            textColor={"#A1AEC1"}
+            borderRadius="5.5px"
+            onClick={() => setDarkMode(!darkMode)}
+            icon={darkMode ? <FaSun></FaSun> : <FaMoon></FaMoon>}
+          />
+        </Box>
+      </Flex>
+
       <Box
         pos="absolute"
         bottom="0"
@@ -120,10 +167,10 @@ const StagingArea = () => {
         marginLeft="15.75%"
         marginBottom={8}
       >
-        <div id="container">
+        <Box>
           <canvas ref={canvas}></canvas>
           <audio controls></audio>
-        </div>
+        </Box>
         <AutosizeTextarea
           enteredDesc={enteredDesc}
           setEnteredDesc={setEnteredDesc}
