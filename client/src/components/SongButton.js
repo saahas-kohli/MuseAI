@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Flex, Center } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/react";
 import { MdMoreHoriz } from "react-icons/md";
+import { BsPinAngleFill } from "react-icons/bs";
+import { EditIcon } from "@chakra-ui/icons";
 import {
   Menu,
   MenuButton,
@@ -31,6 +33,7 @@ import {
   PopoverAnchor,
   useDisclosure,
 } from "@chakra-ui/react";
+import { GoTrash } from "react-icons/go";
 
 const SongButton = ({
   todo,
@@ -226,7 +229,22 @@ const SongButton = ({
 
                 <MenuList width="102%" marginTop="-5px" marginLeft="-5.35%">
                   <MenuItem
-                    _hover={{ bg: "#EDECED" }}
+                    borderColor="#005FCD"
+                    marginTop="-3px"
+                    borderRadius="4px"
+                    icon={
+                      <Icon
+                        as={BsPinAngleFill}
+                        marginBottom="1.5px"
+                        strokeWidth={1}
+                        boxSize={4}
+                      ></Icon>
+                    }
+                    iconSpacing="9px"
+                    h="38px"
+                    w="95%"
+                    marginLeft="5.5px"
+                    _hover={{ bg: "#EDECED", border: "2px solid #005FCD" }}
                     _focus={{ outline: "none" }}
                     onClick={(e) => {
                       setZMoreButton(-1);
@@ -236,7 +254,22 @@ const SongButton = ({
                     Pin
                   </MenuItem>
                   <MenuItem
-                    _hover={{ bg: "#EDECED" }}
+                    borderColor="#005FCD"
+                    marginTop="5px"
+                    w="95%"
+                    marginLeft="5.5px"
+                    borderRadius="4px"
+                    icon={
+                      <Icon
+                        as={EditIcon}
+                        marginBottom="1.5px"
+                        strokeWidth={1}
+                        boxSize={4}
+                      ></Icon>
+                    }
+                    iconSpacing="9px"
+                    h="38px"
+                    _hover={{ bg: "#EDECED", border: "2px solid #005FCD" }}
                     _focus={{ outline: "none" }}
                     onClick={(e) => {
                       setPreviewFocusable(true);
@@ -254,12 +287,33 @@ const SongButton = ({
                     Rename
                   </MenuItem>
                   <MenuItem
-                    _hover={{ bg: "#EDECED" }}
+                    borderColor="#005FCD"
+                    marginTop="5px"
+                    w="95%"
+                    marginLeft="5.5px"
+                    borderRadius="4px"
+                    h="38px"
+                    marginBottom="-3px"
+                    _hover={{
+                      bg: "#EDECED",
+                      border: "2px solid #005FCD",
+                    }}
                     _focus={{ outline: "none" }}
                     onClick={(e) => {
                       deleteFromList(todo.todo_id);
                       e.stopPropagation();
                     }}
+                    color="#EF4444"
+                    icon={
+                      <Icon
+                        as={GoTrash}
+                        marginBottom="1.5px"
+                        strokeWidth={1}
+                        boxSize={4}
+                        color="#EF4444"
+                      ></Icon>
+                    }
+                    iconSpacing="9px"
                   >
                     Delete song
                   </MenuItem>

@@ -4,9 +4,13 @@ import { List, ListItem } from "@chakra-ui/react";
 
 import SongButton from "./SongButton";
 
-const ListSongs = ({ listRender, setListRender }) => {
+const ListSongs = ({
+  listRender,
+  setListRender,
+  selectedSong,
+  setSelectedSong,
+}) => {
   const [todos, setTodos] = useState([]);
-  const [selectedSong, setSelectedSong] = useState(-1);
 
   //delete function
   const deleteFromList = async (id) => {
@@ -46,8 +50,6 @@ const ListSongs = ({ listRender, setListRender }) => {
           <ListItem key={todo.todo_id}>
             <SongButton
               todo={todo}
-              listRender={listRender}
-              setListRender={setListRender}
               deleteFromList={deleteFromList}
               selectedSong={selectedSong}
               setSelectedSong={setSelectedSong}
