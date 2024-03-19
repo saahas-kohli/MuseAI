@@ -30,9 +30,13 @@ import {
 // components
 import ListSongs from "./ListSongs";
 
-const Sidebar = ({ selectedSong, setSelectedSong }) => {
+const Sidebar = ({
+  selectedSong,
+  setSelectedSong,
+  listRender,
+  setListRender,
+}) => {
   const [defaultDescription, setDefaultDescription] = useState("");
-  const [listRender, setListRender] = useState(true);
 
   const addToList = async (e) => {
     e.preventDefault();

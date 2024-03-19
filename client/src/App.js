@@ -19,6 +19,7 @@ const theme = extendTheme({
 
 function App() {
   const [selectedSong, setSelectedSong] = useState(-1);
+  const [listRender, setListRender] = useState(true);
 
   return (
     <ChakraProvider theme={theme}>
@@ -28,11 +29,17 @@ function App() {
             <Sidebar
               selectedSong={selectedSong}
               setSelectedSong={setSelectedSong}
+              listRender={listRender}
+              setListRender={setListRender}
             ></Sidebar>
           </Box>
         </Box>
         <Box w={0.828} bg="" h="calc(100vh)">
-          <StagingArea selectedSong={selectedSong} />
+          <StagingArea
+            selectedSong={selectedSong}
+            listRender={listRender}
+            setListRender={setListRender}
+          />
         </Box>
       </Flex>
     </ChakraProvider>

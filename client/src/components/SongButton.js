@@ -109,7 +109,7 @@ const SongButton = ({
         }}
         width="92.25%"
         height="36px"
-        borderRadius="8.5px"
+        borderRadius={"8.5px"}
         justifyContent={"flex-start"}
         ref={containerRef}
         bg={

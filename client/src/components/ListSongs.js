@@ -4,22 +4,21 @@ import { List, ListItem } from "@chakra-ui/react";
 
 import SongButton from "./SongButton";
 
-const ListSongs = ({
+function ListSongs({
   listRender,
   setListRender,
   selectedSong,
   setSelectedSong,
-}) => {
+}) {
   const [todos, setTodos] = useState([]);
 
   //delete function
   const deleteFromList = async (id) => {
     try {
+      setTodos(todos.filter((todo) => todo.todo_id !== id));
       const delTodo = await fetch(`http://localhost:9000/todos/${id}`, {
         method: "DELETE",
       });
-
-      setTodos(todos.filter((todo) => todo.todo_id !== id));
     } catch (err) {
       console.error(err.message);
     }
@@ -58,6 +57,6 @@ const ListSongs = ({
         ))}
     </List>
   );
-};
+}
 
 export default ListSongs;

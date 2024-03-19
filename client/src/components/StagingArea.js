@@ -280,7 +280,7 @@ const AutosizeTextarea = ({
   const updateDescription = async (description) => {
     try {
       const body = { description };
-
+      setListRender(!listRender);
       const response = await fetch(
         `http://localhost:9000/todos/${selectedSong}`,
         {
@@ -289,7 +289,6 @@ const AutosizeTextarea = ({
           body: JSON.stringify(body),
         }
       );
-      setListRender(!listRender);
     } catch (err) {
       console.error(err.message);
     }
