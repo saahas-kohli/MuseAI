@@ -10,6 +10,8 @@ import { ArrowUpIcon } from "@chakra-ui/icons";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
 import { IconButton } from "@chakra-ui/react";
+import { Spinner } from '@chakra-ui/react';
+import { CircularProgress, CircularProgressLabel } from "@chakra-ui/react";
 import {
   Popover,
   PopoverTrigger,
@@ -23,35 +25,183 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
+const OpeningMessage = () => {
+  // This component handles the opening message
+  return (
+    <>
+    <Box
+      bottom="0"
+      width="80%"  // Adjusted width for a larger box
+      height="300px"  // Specify a height to make the box larger
+      marginLeft="7%"  // Adjusted to keep the box centered with the new width
+      marginBottom={35}
+      borderRadius="20px"  // Added rounded edges
+      overflow="hidden"  // Ensure the canvas respects the Box's rounded corners
+    >
+      <Box
+          pos="relative"
+          left="0"
+          marginTop="0px"
+          marginLeft="135px"
+          fontWeight="semibold"
+          fontSize="24px"
+        >
+          What would you like to listen to?
+        </Box>
+    </Box>
+    </>
+  );
+};
+
+const RenderingMessage = () => {
+  // This component handles the rendering message
+  return (
+    <>
+    <Box
+      bottom="0"
+      width="80%"  // Adjusted width for a larger box
+      height="300px"  // Specify a height to make the box larger
+      marginLeft="7%"  // Adjusted to keep the box centered with the new width
+      marginBottom={35}
+      borderRadius="20px"  // Added rounded edges
+      overflow="hidden"  // Ensure the canvas respects the Box's rounded corners
+    >
+      <Box
+          pos="relative"
+          left="0"
+          marginTop="0px"
+          marginLeft="230px"
+          fontWeight="semibold"
+          fontSize="24px"
+        >
+          Rendering&nbsp;&nbsp;
+          <Spinner
+            speed='0.65s'
+          />
+        </Box>
+    </Box>
+    </>
+  );
+};
+
+let data = "Default value";
+
+const Output = ({ canvas, audioSrc, audioRef }) => {
+  return (
+    <>
+    <Box
+      bottom="0"
+      width="80%"  // Adjusted width for a larger box
+      height="300px"  // Specify a height to make the box larger
+      marginLeft="7%"  // Adjusted to keep the box centered with the new width
+      marginBottom={8}
+      borderRadius="20px"  // Added rounded edges
+      overflow="hidden"  // Ensure the canvas respects the Box's rounded corners
+    >
+      <Flex justifyContent="center" alignItems="center" height="100%">
+        <canvas ref={canvas} style={{ width: '100%', height: '100%', display: 'block', backgroundColor: 'black' }}></canvas>
+      </Flex>
+    </Box>
+    <Box bottom="0" width="50.75%" marginLeft="20%" marginBottom={135}>
+      <Flex justifyContent="center" alignItems="center" height="100%"> 
+        <audio controls src={audioSrc} ref={audioRef}></audio>
+      </Flex>
+    </Box>
+    </>
+  );
+};
+
 const StagingArea = () => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const [ws, setWs] = useState(null);
   const canvas = useRef(null);
+  // Control components flashing on and off the screen to make transitions look better
+  const [messageVisible, setMessageVisibility] = useState(true);
+  const [renderingVisible, setRenderingVisibility] = useState(false);
+  const [outputVisible, setOutputVisibility] = useState(false);
+  const [canvasReady, setCanvasReady] = useState(false);
+  const [audioSrc, setAudioSrc] = useState("");
+  const audioRef = useRef(null);
 
   useEffect(() => {
-    console.log(enteredDesc);
+    console.log("Prompt is '" + enteredDesc + "'");
   }, [enteredDesc]);
 
   useEffect(() => {
-    // Initialize WebSocket connection
-    const newWs = new WebSocket("ws://localhost:6789");
-
-    newWs.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log(data.output.slice(0, 20));
+    if (canvas.current && audioRef.current) {
+      const audioElement = audioRef.current;
+      canvas.current.over = false;
+      // Perform canvas operations here
+      // DRAWING STARTS HERE
+      // console.log("DATA");
+      // console.log(data.output);
+      // console.log("DATA");
       // Handle received message
       const ctx = canvas.current.getContext("2d");
       // canvas.current.width = window.innerWidth;
       // canvas.current.height = window.innerHeight;
-      canvas.current.width = 800;
-      canvas.current.height = 400;
+      canvas.current.width = 404;
+      canvas.current.height = 300;
       // ctx.fillStyle = 'rgb(100,0,0)';
       // ctx.fillRect(0, 0, 100, 100);
       let audioSource;
       let analyser;
       let audio1 = new Audio("data:audio/x-wav;base64," + data.output);
+
+      setAudioSrc("data:audio/x-wav;base64," + data.output);
+
       const audioCtx = new AudioContext();
+
+      // Event handlers
+      const handlePlay = () => {
+        canvas.current.over = false;
+        audio1.play();
+        animate();
+      };
+
+      const handleSeek = () => {
+        canvas.current.over = false;
+        animate();
+      };
+
+      const handleEnded = () => {
+        canvas.current.over = true;
+        audio1.pause();
+      };
+
+      // Attach event listeners
+      audioElement.addEventListener('play', handlePlay);
+      audioElement.addEventListener('playing', handleSeek);
+      audioElement.addEventListener('seeked', handleSeek);
+      audioElement.addEventListener('ended', handleEnded);
+      audioElement.addEventListener('pause', handleEnded);
+
+      // const playLog = () => {
+      //   console.log('play');
+      // };
+      // const playingLog = () => {
+      //   console.log('playing');
+      // };
+      // const seekedLog = () => {
+      //   console.log('seeked');
+      // };
+      // const endedLog = () => {
+      //   console.log('ended');
+      // };
+
+      // audioElement.addEventListener('play', playLog);
+      // audioElement.addEventListener('playing', playingLog);
+      // audioElement.addEventListener('seeked', seekedLog);
+      // audioElement.addEventListener('ended', endedLog);
+
+      // Start animation if audio is already playing (e.g., on component mount if audio was started elsewhere)
+      if (!audioElement.paused) {
+        handlePlay();
+      }
+
+      // Start the audio once at the beginning by default
       audio1.play();
+
       audioSource = audioCtx.createMediaElementSource(audio1);
       analyser = audioCtx.createAnalyser();
       audioSource.connect(analyser);
@@ -64,37 +214,114 @@ const StagingArea = () => {
       let barHeight;
       let x;
 
+      handlePlay();
+
+      // function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
+      //   const maxBarHeight = Math.max(...dataArray);
+      //   for (let i = 0; i < bufferLength; i++) {
+
+      //     let value = dataArray[i] > 0 ? Math.log10(dataArray[i]) : 0;
+      //     let normalizedHeight = value / Math.log10(maxBarHeight);
+      //     let barHeight = normalizedHeight * canvas.current.height;
+      //     if (barHeight == 0) {
+      //       barHeight = 200 * (1 / i)
+      //     }
+
+      //     // Create the gradient for this bar
+      //     let gradientStartY = canvas.current.height - barHeight;
+      //     let gradientEndY = canvas.current.height;
+
+      //     // Ensure that the start and end Y positions are finite numbers
+      //     if (!Number.isFinite(gradientStartY) || !Number.isFinite(gradientEndY)) {
+      //       continue; // Skip this iteration
+      //     }
+
+      //     let gradient = ctx.createLinearGradient(0, gradientStartY, 0, gradientEndY);
+      //     gradient.addColorStop(0, 'rgb(239, 246, 5)'); // Yellow at the top
+      //     gradient.addColorStop(1, 'rgb(148, 0, 211)'); // Purple at the bottom
+
+      //     ctx.fillStyle = gradient;
+      //     ctx.fillRect(x, gradientStartY, barWidth, barHeight);
+
+      //     x += barWidth;
+      //   }
+      // }
+
       function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
+        const maxBarHeight = Math.max(...dataArray);
+        
+        // To increase variance, we could amplify the difference between the high and low values.
+        // We calculate the exponent based on the maximum value to maintain the dynamic range.
+        const exponent = maxBarHeight > 0 ? Math.log10(maxBarHeight) / 2 : 1;
+        
         for (let i = 0; i < bufferLength; i++) {
-          barHeight = dataArray[i];
-          const red = (i * barHeight) / 20;
-          const green = i * 4;
-          const blue = barHeight / 2;
-          ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
-          // console.log('barWidth' + barWidth);
-          // console.log('barHeight' + barHeight);
-          // ctx.fillRect(x, -(canvas.height - barHeight), barWidth, barHeight);
-          ctx.fillRect(
-            x,
-            canvas.current.height - barHeight,
-            barWidth,
-            barHeight
-          );
+          // Apply an exponential transformation to the dataArray values
+          let value = dataArray[i] > 0 ? Math.pow(dataArray[i], exponent) : 0;
+          let normalizedHeight = value / Math.pow(maxBarHeight, exponent);
+          
+          // Make sure the bar height is at least a random small value to be visible
+          let barHeight = normalizedHeight * canvas.current.height;
+          if (barHeight <= 1) {
+            barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
+          }
+      
+          // Create the gradient for this bar
+          let gradientStartY = canvas.current.height - barHeight;
+          let gradientEndY = canvas.current.height;
+      
+          // Ensure that the start and end Y positions are finite numbers
+          if (!Number.isFinite(gradientStartY) || !Number.isFinite(gradientEndY)) {
+            continue; // Skip this iteration
+          }
+      
+          let gradient = ctx.createLinearGradient(0, gradientStartY, 0, gradientEndY);
+          gradient.addColorStop(0, 'rgb(255, 235, 205)'); // Fainter yellow at the bottom
+          gradient.addColorStop(1, 'rgb(128, 0, 128)'); // Purple at the top
+      
+          ctx.fillStyle = gradient;
+          ctx.fillRect(x, gradientStartY, barWidth, barHeight);
+      
+          // Move to the next bar's x position
           x += barWidth;
         }
       }
+      
 
       function animate() {
-        console.log("Animate was run");
+        // console.log("Animate was run");
         // x = 0;
         x = 0;
         ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
         analyser.getByteFrequencyData(dataArray);
-        console.log(dataArray);
+        // console.log(dataArray);
         drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray);
-        requestAnimationFrame(animate);
+        if (!canvas.current.over) {
+          requestAnimationFrame(animate);
+        }
       }
-      animate();
+
+      // Cleanup function
+      return () => {
+        audioElement.removeEventListener('play', handlePlay);
+        audioElement.removeEventListener('ended', handleEnded);
+      };
+
+      // DRAWING ENDS HERE
+    }
+  }, [canvasReady, audioRef]); // This effect depends on canvas.current
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    const newWs = new WebSocket("ws://localhost:6789");
+
+    newWs.onmessage = (event) => {
+      setRenderingVisibility(false);
+      setOutputVisibility(true);
+
+      data = JSON.parse(event.data);
+      // console.log("This is the music data log!");
+      // console.log(data.output.slice(0, 20));
+      prepareCanvas();
     };
 
     setWs(newWs);
@@ -107,7 +334,22 @@ const StagingArea = () => {
     };
   }, []);
 
+  const prepareCanvas = () => {
+    // if (canvas.current) {
+    //   setCanvasReady(true);
+    // }
+    setCanvasReady(true);
+  };
+
   const runMusicGen = (musicDescription) => {
+    if (messageVisible) {
+      setMessageVisibility(false);
+    }
+    if (outputVisible) {
+      setOutputVisibility(false);
+    }
+    setCanvasReady(false);
+    setRenderingVisibility(true);
     if (ws && ws.readyState === WebSocket.OPEN) {
       const data = { prompt: musicDescription };
       ws.send(JSON.stringify(data));
@@ -176,10 +418,11 @@ const StagingArea = () => {
         marginLeft="15.75%"
         marginBottom={8}
       >
-        <Box>
-          <canvas ref={canvas}></canvas>
-          <audio controls></audio>
-        </Box>
+
+        {messageVisible && <OpeningMessage />}
+        {renderingVisible && <RenderingMessage />}
+        {outputVisible && <Output canvas={canvas} audioSrc={audioSrc} audioRef={audioRef}/>}
+
         <AutosizeTextarea
           enteredDesc={enteredDesc}
           setEnteredDesc={setEnteredDesc}
