@@ -10,12 +10,32 @@ import { IconButton, Avatar } from "@chakra-ui/react";
 import { avatarAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers, defineStyle } from "@chakra-ui/react";
 import { MdCellTower } from "react-icons/md";
+import { MdMoreHoriz } from "react-icons/md";
+import { BsPinAngleFill } from "react-icons/bs";
+import { EditIcon } from "@chakra-ui/icons";
+import { GoTrash } from "react-icons/go";
+import { MdOutlineLogout } from "react-icons/md";
+import { BsGear } from "react-icons/bs";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+} from "@chakra-ui/react";
 
 // components
 import ListSongs from "./ListSongs";
 
-const Sidebar = () => {
-  const [listRender, setListRender] = useState(true);
+const Sidebar = ({
+  selectedSong,
+  setSelectedSong,
+  listRender,
+  setListRender,
+}) => {
   const [defaultDescription, setDefaultDescription] = useState("");
 
   const addToList = async (e) => {
@@ -38,8 +58,8 @@ const Sidebar = () => {
       <Box
         className="custom-scrollbar"
         overflowY="scroll"
-        maxHeight="650px"
-        minHeight="650px"
+        maxHeight="700px"
+        minHeight="700px"
         overflowX="hidden"
         width="100%"
       >
@@ -94,46 +114,103 @@ const Sidebar = () => {
           </Button>
         </Box>
         <Box marginTop="10%">
-          <Box marginBottom="76px">
+          <Box marginBottom="105px">
             <ListSongs
               listRender={listRender}
               setListRender={setListRender}
+              selectedSong={selectedSong}
+              setSelectedSong={setSelectedSong}
             ></ListSongs>
           </Box>
         </Box>
       </Box>
-      <Box marginTop="28.5%" marginLeft="4.75%" width="100%">
-        <Button
-          width="92.25%"
-          height="48px"
-          borderRadius="8.5px"
-          bg="#F9F8F8"
-          _hover={{ bg: "#EDECED" }}
-          variant="ghost"
-          _focusVisible={{ boxShadow: "none" }}
-          justifyContent="flex-start"
-        >
-          <Flex marginLeft="-8.5px">
-            <Box>
-              <Avatar
-                background="green"
-                textColor="white"
-                size="sm"
-                name="Saahas Kohli"
-                src=""
-              />
-            </Box>
-            <Box
-              fontSize="14px"
-              fontWeight={440}
-              letterSpacing="-0.01em"
-              marginTop="7.5px"
-              marginLeft="7px"
+      <Box marginTop="8.75%" marginLeft="4.75%" width="100%">
+        <Menu placement="top-end">
+          <MenuButton
+            as={Button}
+            _focus={{ outline: "none" }}
+            _active={{ bg: "#EDECED" }}
+            width="92.25%"
+            height="48px"
+            borderRadius="8.5px"
+            bg="#F9F8F8"
+            _hover={{ bg: "#EDECED" }}
+            variant="ghost"
+            _focusVisible={{ boxShadow: "none" }}
+            justifyContent="flex-start"
+          >
+            <Flex marginLeft="-8.5px">
+              <Box>
+                <Avatar
+                  background="green"
+                  textColor="white"
+                  size="sm"
+                  name="Saahas Kohli"
+                  src=""
+                />
+              </Box>
+              <Box
+                fontSize="14px"
+                fontWeight={440}
+                letterSpacing="-0.01em"
+                marginTop="7.5px"
+                marginLeft="7px"
+              >
+                Saahas Kohli
+              </Box>
+            </Flex>
+          </MenuButton>
+
+          <MenuList
+            fontSize="14px"
+            fontWeight={440}
+            letterSpacing="-0.01em"
+            marginBottom="-5px"
+            width="105.5%"
+            marginLeft="-5.55%"
+          >
+            <MenuItem
+              borderColor="#005FCD"
+              borderRadius="4px"
+              icon={<Icon as={BsGear} marginBottom="1.5px" boxSize={4}></Icon>}
+              iconSpacing="9px"
+              h="38px"
+              w="95%"
+              marginLeft="5.5px"
+              _hover={{ bg: "#EDECED", border: "2px solid #005FCD" }}
+              _focus={{ outline: "none" }}
             >
-              Saahas Kohli
+              Settings
+            </MenuItem>
+            <MenuDivider></MenuDivider>
+            <MenuItem
+              borderColor="#005FCD"
+              marginTop="5px"
+              w="95%"
+              marginLeft="4.5px"
+              borderRadius="4px"
+              h="38px"
+              _hover={{
+                bg: "#EDECED",
+                border: "2px solid #005FCD",
+              }}
+              _focus={{ outline: "none" }}
+              icon={
+                <Icon
+                  as={MdOutlineLogout}
+                  marginBottom="1.5px"
+                  boxSize={5}
+                ></Icon>
+              }
+              iconSpacing="9px"
+            >
+              Log out
+            </MenuItem>
+            <Box fontSize="11px" color="#9A9B9A" marginLeft="16px">
+              {"("}saahask@gmail.com{")"}
             </Box>
-          </Flex>
-        </Button>
+          </MenuList>
+        </Menu>
       </Box>
     </Box>
   );

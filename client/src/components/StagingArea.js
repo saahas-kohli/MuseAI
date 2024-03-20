@@ -5,13 +5,14 @@ import { Flex, Spacer } from "@chakra-ui/react";
 import { Container, Center } from "@chakra-ui/react";
 import autosize from "autosize";
 import React, { useRef, useState, useEffect } from "react";
-import { Textarea } from "@chakra-ui/react";
+import { Link, Textarea } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
-import { IconButton } from "@chakra-ui/react";
 import { Spinner } from '@chakra-ui/react';
 import { CircularProgress, CircularProgressLabel } from "@chakra-ui/react";
+import { BsGithub } from "react-icons/bs";
+import { Text, Icon, IconButton } from "@chakra-ui/react";
 import {
   Popover,
   PopoverTrigger,
@@ -110,8 +111,19 @@ const Output = ({ canvas, audioSrc, audioRef }) => {
     </>
   );
 };
+import { MdMoreHoriz } from "react-icons/md";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+} from "@chakra-ui/react";
 
-const StagingArea = () => {
+const StagingArea = ({ selectedSong, listRender, setListRender }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const [ws, setWs] = useState(null);
   const canvas = useRef(null);
@@ -363,46 +375,94 @@ const StagingArea = () => {
   return (
     <Box>
       <Flex>
-        <Box
-          pos="relative"
-          left="0"
-          marginTop="15px"
-          marginLeft="21px"
-          fontWeight="semibold"
-          fontSize="18px"
-        >
-          MuseAI
+        <Menu placement="bottom-start">
+          <MenuButton
+            as={Box}
+            marginLeft="8px"
+            marginTop="6px"
+            borderRadius="12px"
+            height="44px"
+            width="145px"
+            bg="transparent"
+            _hover={{ bg: "#F9F8F8" }}
+            _active={{ bg: "#F9F8F8" }}
+            style={{ cursor: "pointer" }}
+          >
+            <Flex>
+              <Box
+                pos="relative"
+                left="0"
+                marginTop="9px"
+                marginLeft="13px"
+                fontWeight="semibold"
+                fontSize="18px"
+              >
+                MuseAI
+              </Box>
+              <Box
+                marginTop="9px"
+                marginLeft="5px"
+                fontWeight="semibold"
+                fontSize="18px"
+                color="#676666"
+              >
+                Beta
+              </Box>
+              <IconButton
+                icon={<FaChevronDown />}
+                size="xs"
+                marginTop="11px"
+                background="transparent"
+                textColor="#9A9B9A"
+                _hover={{}}
+                _active={{}}
+              ></IconButton>
+            </Flex>
+          </MenuButton>
+
+          <MenuList
+            borderRadius="8px"
+            fontSize="14px"
+            fontWeight={440}
+            letterSpacing="-0.01em"
+            width="151.5%"
+            maxWidth="340px"
+            height="170px"
+            marginTop="-3px"
+          >
+            <Box marginLeft="13px" marginTop="3px" marginRight="13px">
+              Welcome to MuseAI! We perform conditional music generation based
+              on textual descriptions. Please input as many distinct
+              characteristics of your desired song as possible. Our single-stage
+              transformer language model will then generate a brief audio clip
+              and visualizer based on those preferences. Enjoy making music :{" "}
+              {")"}
+            </Box>
+          </MenuList>
+        </Menu>
+
+        <Box pos="absolute" right="0" marginTop="18px" marginRight="61px">
+          <Link href="https://github.com/dfields-1" isExternal={true}>
+            <Icon
+              as={BsGithub}
+              boxSize={5}
+              color="#A1AEC1"
+              _hover={{ color: "#4A5568" }}
+            ></Icon>
+          </Link>
         </Box>
-        <Box
-          marginTop="15px"
-          marginLeft="5px"
-          fontWeight="semibold"
-          fontSize="18px"
-          color="#676666"
-        >
-          Beta
-        </Box>
-        <IconButton
-          icon={<FaChevronDown />}
-          size="xs"
-          marginTop="17px"
-          background="transparent"
-          textColor="#9A9B9A"
-          _hover={{}}
-          _active={{}}
-        ></IconButton>
         <Box pos="absolute" right="0" marginTop="7.5px" marginRight="12px">
           <IconButton
             variant="solid"
             aria-label="color-mode icon"
-            background={"transparent"}
+            background="transparent"
             _hover={{
               background: darkMode ? "#2D303D" : "#EDF3F7",
             }}
             _active={{
               transform: "scale(0.95)",
             }}
-            fontSize={darkMode ? "23px" : "18px"}
+            fontSize={darkMode ? "24px" : "19px"}
             textColor={"#A1AEC1"}
             borderRadius="5.5px"
             onClick={() => setDarkMode(!darkMode)}
@@ -427,13 +487,23 @@ const StagingArea = () => {
           enteredDesc={enteredDesc}
           setEnteredDesc={setEnteredDesc}
           runMusicGen={runMusicGen}
+          selectedSong={selectedSong}
+          listRender={listRender}
+          setListRender={setListRender}
         />
       </Box>
     </Box>
   );
 };
 
-const AutosizeTextarea = ({ enteredDesc, setEnteredDesc, runMusicGen }) => {
+const AutosizeTextarea = ({
+  enteredDesc,
+  setEnteredDesc,
+  runMusicGen,
+  selectedSong,
+  listRender,
+  setListRender,
+}) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
   const [buttonDarkened, setButtonDarkened] = useState(false);
@@ -454,24 +524,45 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc, runMusicGen }) => {
     }
   }, [flag, enteredDesc]);
 
+  const updateDescription = async (description) => {
+    try {
+      const body = { description };
+      setListRender(!listRender);
+      const response = await fetch(
+        `http://localhost:9000/todos/${selectedSong}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   const handleEnter = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       // Prevent the default behavior (adding a new line)
       e.preventDefault();
       const textarea = ref.current;
+      const temp = textarea.value;
       setEnteredDesc(textarea.value);
       runMusicGen(textarea.value);
       textarea.value = "";
       setButtonDarkened(false);
+      updateDescription(temp);
     }
   };
 
   const handleEnterButton = () => {
     const textarea = ref.current;
+    const temp = textarea.value;
     setEnteredDesc(textarea.value);
     runMusicGen(textarea.value);
     textarea.value = "";
     setButtonDarkened(false);
+    updateDescription(temp);
   };
 
   const handleChange = () => {
@@ -485,9 +576,9 @@ const AutosizeTextarea = ({ enteredDesc, setEnteredDesc, runMusicGen }) => {
       <Textarea
         onChange={handleChange}
         onKeyDown={(e) => handleEnter(e)}
-        minHeight="20px"
+        minHeight="5px"
         ref={ref}
-        placeholder="Enter song description..."
+        placeholder={"Enter song description..."}
         color="black"
         fontWeight={420}
         borderRadius="15px"

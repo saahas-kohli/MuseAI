@@ -4,18 +4,21 @@ import { List, ListItem } from "@chakra-ui/react";
 
 import SongButton from "./SongButton";
 
-const ListSongs = ({ listRender, setListRender }) => {
+function ListSongs({
+  listRender,
+  setListRender,
+  selectedSong,
+  setSelectedSong,
+}) {
   const [todos, setTodos] = useState([]);
-  const [selectedSong, setSelectedSong] = useState(-1);
 
   //delete function
   const deleteFromList = async (id) => {
     try {
+      setTodos(todos.filter((todo) => todo.todo_id !== id));
       const delTodo = await fetch(`http://localhost:9000/todos/${id}`, {
         method: "DELETE",
       });
-
-      setTodos(todos.filter((todo) => todo.todo_id !== id));
     } catch (err) {
       console.error(err.message);
     }
@@ -46,8 +49,6 @@ const ListSongs = ({ listRender, setListRender }) => {
           <ListItem key={todo.todo_id}>
             <SongButton
               todo={todo}
-              listRender={listRender}
-              setListRender={setListRender}
               deleteFromList={deleteFromList}
               selectedSong={selectedSong}
               setSelectedSong={setSelectedSong}
@@ -56,6 +57,6 @@ const ListSongs = ({ listRender, setListRender }) => {
         ))}
     </List>
   );
-};
+}
 
 export default ListSongs;
