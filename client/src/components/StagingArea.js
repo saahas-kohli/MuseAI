@@ -9,7 +9,7 @@ import { Link, Textarea } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
-import { Spinner } from '@chakra-ui/react';
+import { Spinner } from "@chakra-ui/react";
 import { CircularProgress, CircularProgressLabel } from "@chakra-ui/react";
 import { BsGithub } from "react-icons/bs";
 import { Text, Icon, IconButton } from "@chakra-ui/react";
@@ -25,92 +25,6 @@ import {
   PopoverAnchor,
   useDisclosure,
 } from "@chakra-ui/react";
-
-const OpeningMessage = () => {
-  // This component handles the opening message
-  return (
-    <>
-    <Box
-      bottom="0"
-      width="80%"  // Adjusted width for a larger box
-      height="300px"  // Specify a height to make the box larger
-      marginLeft="7%"  // Adjusted to keep the box centered with the new width
-      marginBottom={35}
-      borderRadius="20px"  // Added rounded edges
-      overflow="hidden"  // Ensure the canvas respects the Box's rounded corners
-    >
-      <Box
-          pos="relative"
-          left="0"
-          marginTop="0px"
-          marginLeft="135px"
-          fontWeight="semibold"
-          fontSize="24px"
-        >
-          What would you like to listen to?
-        </Box>
-    </Box>
-    </>
-  );
-};
-
-const RenderingMessage = () => {
-  // This component handles the rendering message
-  return (
-    <>
-    <Box
-      bottom="0"
-      width="80%"  // Adjusted width for a larger box
-      height="300px"  // Specify a height to make the box larger
-      marginLeft="7%"  // Adjusted to keep the box centered with the new width
-      marginBottom={35}
-      borderRadius="20px"  // Added rounded edges
-      overflow="hidden"  // Ensure the canvas respects the Box's rounded corners
-    >
-      <Box
-          pos="relative"
-          left="0"
-          marginTop="0px"
-          marginLeft="230px"
-          fontWeight="semibold"
-          fontSize="24px"
-        >
-          Rendering&nbsp;&nbsp;
-          <Spinner
-            speed='0.65s'
-          />
-        </Box>
-    </Box>
-    </>
-  );
-};
-
-let data = "Default value";
-
-const Output = ({ canvas, audioSrc, audioRef }) => {
-  return (
-    <>
-    <Box
-      bottom="0"
-      width="80%"  // Adjusted width for a larger box
-      height="300px"  // Specify a height to make the box larger
-      marginLeft="7%"  // Adjusted to keep the box centered with the new width
-      marginBottom={8}
-      borderRadius="20px"  // Added rounded edges
-      overflow="hidden"  // Ensure the canvas respects the Box's rounded corners
-    >
-      <Flex justifyContent="center" alignItems="center" height="100%">
-        <canvas ref={canvas} style={{ width: '100%', height: '100%', display: 'block', backgroundColor: 'black' }}></canvas>
-      </Flex>
-    </Box>
-    <Box bottom="0" width="50.75%" marginLeft="20%" marginBottom={135}>
-      <Flex justifyContent="center" alignItems="center" height="100%"> 
-        <audio controls src={audioSrc} ref={audioRef}></audio>
-      </Flex>
-    </Box>
-    </>
-  );
-};
 import { MdMoreHoriz } from "react-icons/md";
 import {
   Menu,
@@ -122,6 +36,101 @@ import {
   MenuOptionGroup,
   MenuDivider,
 } from "@chakra-ui/react";
+
+const OpeningMessage = () => {
+  // This component handles the opening message
+  return (
+    <>
+      <Box
+        bottom="0"
+        width="80%" // Adjusted width for a larger box
+        height="300px" // Specify a height to make the box larger
+        marginLeft="7%" // Adjusted to keep the box centered with the new width
+        marginBottom={35}
+        borderRadius="20px" // Added rounded edges
+        overflow="hidden" // Ensure the canvas respects the Box's rounded corners
+      >
+        <Box
+          pos="relative"
+          left="0"
+          marginTop="0px"
+          marginLeft="135px"
+          fontWeight="semibold"
+          fontSize="24px"
+        >
+          What would you like to listen to?
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+const RenderingMessage = () => {
+  // This component handles the rendering message
+  return (
+    <>
+      <Box
+        bottom="0"
+        width="80%" // Adjusted width for a larger box
+        height="300px" // Specify a height to make the box larger
+        marginLeft="7%" // Adjusted to keep the box centered with the new width
+        marginBottom={35}
+        borderRadius="20px" // Added rounded edges
+        overflow="hidden" // Ensure the canvas respects the Box's rounded corners
+      >
+        <Flex
+          pos="relative"
+          left="0"
+          marginTop="0px"
+          marginLeft="230px"
+          fontWeight="semibold"
+          fontSize="24px"
+        >
+          <Box>Generating&nbsp;&nbsp;</Box>
+          <Box marginTop="4px">
+            <Spinner speed="0.65s" />
+          </Box>
+        </Flex>
+        <Box></Box>
+      </Box>
+    </>
+  );
+};
+
+let data = "Default value";
+
+const Output = ({ canvas, audioSrc, audioRef }) => {
+  return (
+    <>
+      <Box
+        bottom="0"
+        width="80%" // Adjusted width for a larger box
+        height="300px" // Specify a height to make the box larger
+        marginLeft="7%" // Adjusted to keep the box centered with the new width
+        marginBottom={8}
+        borderRadius="20px" // Added rounded edges
+        overflow="hidden" // Ensure the canvas respects the Box's rounded corners
+      >
+        <Flex justifyContent="center" alignItems="center" height="100%">
+          <canvas
+            ref={canvas}
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "block",
+              backgroundColor: "black",
+            }}
+          ></canvas>
+        </Flex>
+      </Box>
+      <Box bottom="0" width="50.75%" marginLeft="20%" marginBottom={135}>
+        <Flex justifyContent="center" alignItems="center" height="100%">
+          <audio controls src={audioSrc} ref={audioRef}></audio>
+        </Flex>
+      </Box>
+    </>
+  );
+};
 
 const StagingArea = ({ selectedSong, listRender, setListRender }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
@@ -182,11 +191,11 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
       };
 
       // Attach event listeners
-      audioElement.addEventListener('play', handlePlay);
-      audioElement.addEventListener('playing', handleSeek);
-      audioElement.addEventListener('seeked', handleSeek);
-      audioElement.addEventListener('ended', handleEnded);
-      audioElement.addEventListener('pause', handleEnded);
+      audioElement.addEventListener("play", handlePlay);
+      audioElement.addEventListener("playing", handleSeek);
+      audioElement.addEventListener("seeked", handleSeek);
+      audioElement.addEventListener("ended", handleEnded);
+      audioElement.addEventListener("pause", handleEnded);
 
       // const playLog = () => {
       //   console.log('play');
@@ -261,43 +270,50 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
 
       function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
         const maxBarHeight = Math.max(...dataArray);
-        
+
         // To increase variance, we could amplify the difference between the high and low values.
         // We calculate the exponent based on the maximum value to maintain the dynamic range.
         const exponent = maxBarHeight > 0 ? Math.log10(maxBarHeight) / 2 : 1;
-        
+
         for (let i = 0; i < bufferLength; i++) {
           // Apply an exponential transformation to the dataArray values
           let value = dataArray[i] > 0 ? Math.pow(dataArray[i], exponent) : 0;
           let normalizedHeight = value / Math.pow(maxBarHeight, exponent);
-          
+
           // Make sure the bar height is at least a random small value to be visible
           let barHeight = normalizedHeight * canvas.current.height;
           if (barHeight <= 1) {
             barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
           }
-      
+
           // Create the gradient for this bar
           let gradientStartY = canvas.current.height - barHeight;
           let gradientEndY = canvas.current.height;
-      
+
           // Ensure that the start and end Y positions are finite numbers
-          if (!Number.isFinite(gradientStartY) || !Number.isFinite(gradientEndY)) {
+          if (
+            !Number.isFinite(gradientStartY) ||
+            !Number.isFinite(gradientEndY)
+          ) {
             continue; // Skip this iteration
           }
-      
-          let gradient = ctx.createLinearGradient(0, gradientStartY, 0, gradientEndY);
-          gradient.addColorStop(0, 'rgb(255, 235, 205)'); // Fainter yellow at the bottom
-          gradient.addColorStop(1, 'rgb(128, 0, 128)'); // Purple at the top
-      
+
+          let gradient = ctx.createLinearGradient(
+            0,
+            gradientStartY,
+            0,
+            gradientEndY
+          );
+          gradient.addColorStop(0, "rgb(255, 235, 205)"); // Fainter yellow at the bottom
+          gradient.addColorStop(1, "rgb(128, 0, 128)"); // Purple at the top
+
           ctx.fillStyle = gradient;
           ctx.fillRect(x, gradientStartY, barWidth, barHeight);
-      
+
           // Move to the next bar's x position
           x += barWidth;
         }
       }
-      
 
       function animate() {
         // console.log("Animate was run");
@@ -314,8 +330,8 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
 
       // Cleanup function
       return () => {
-        audioElement.removeEventListener('play', handlePlay);
-        audioElement.removeEventListener('ended', handleEnded);
+        audioElement.removeEventListener("play", handlePlay);
+        audioElement.removeEventListener("ended", handleEnded);
       };
 
       // DRAWING ENDS HERE
@@ -431,12 +447,12 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
             marginTop="-3px"
           >
             <Box marginLeft="13px" marginTop="3px" marginRight="13px">
-              Welcome to MuseAI! We perform conditional music generation based
+              Welcome to MuseAI. We perform conditional music generation based
               on textual descriptions. Please input as many distinct
-              characteristics of your desired song as possible. Our single-stage
-              transformer language model will then generate a brief audio clip
-              and visualizer based on those preferences. Enjoy making music :{" "}
-              {")"}
+              characteristics of your desired song as possible. Then, our
+              single-stage transformer language model will generate a brief
+              audio clip and waveform visualizer based on those preferences.
+              Enjoy making music!
             </Box>
           </MenuList>
         </Menu>
@@ -478,10 +494,11 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
         marginLeft="15.75%"
         marginBottom={8}
       >
-
         {messageVisible && <OpeningMessage />}
         {renderingVisible && <RenderingMessage />}
-        {outputVisible && <Output canvas={canvas} audioSrc={audioSrc} audioRef={audioRef}/>}
+        {outputVisible && (
+          <Output canvas={canvas} audioSrc={audioSrc} audioRef={audioRef} />
+        )}
 
         <AutosizeTextarea
           enteredDesc={enteredDesc}
@@ -491,6 +508,17 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
           listRender={listRender}
           setListRender={setListRender}
         />
+      </Box>
+      <Box
+        color="#676666"
+        fontWeight="normal"
+        fontSize="11.5px"
+        pos="absolute"
+        bottom="8px"
+        marginLeft="30%"
+        letterSpacing="-0.01em"
+      >
+        MuseAI may take up to a minute to compose responses.
       </Box>
     </Box>
   );
