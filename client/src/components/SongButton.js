@@ -152,7 +152,7 @@ const SongButton = ({
             <Editable
               isPreviewFocusable={previewFocusable}
               ref={editableRef}
-              defaultValue={todo.description}
+              value={todo.description}
               placeholder={"Unnamed song"}
               selectAllOnFocus={false}
               onChange={(nextValue) => setDescription(nextValue)}
