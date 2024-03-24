@@ -511,12 +511,12 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
       </Box>
       <Box
         color="#676666"
-        fontWeight="normal"
+        fontWeight={450}
         fontSize="11.5px"
         pos="absolute"
         bottom="8px"
-        marginLeft="30%"
-        letterSpacing="-0.01em"
+        marginLeft="30.25%"
+        letterSpacing="-0.03em"
       >
         MuseAI may take up to a minute to compose responses.
       </Box>

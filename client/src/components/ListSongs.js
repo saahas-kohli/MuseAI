@@ -30,6 +30,7 @@ function ListSongs({
       const jsonData = await response.json();
 
       setTodos(jsonData);
+      //console.log(jsonData);
     } catch (err) {
       console.error(err.message);
     }
@@ -52,6 +53,8 @@ function ListSongs({
               deleteFromList={deleteFromList}
               selectedSong={selectedSong}
               setSelectedSong={setSelectedSong}
+              listRender={listRender}
+              setListRender={setListRender}
             />
           </ListItem>
         ))}

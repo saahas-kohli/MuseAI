@@ -54,6 +54,10 @@ const SongButton = ({
   const previewRef = useRef(null);
 
   useEffect(() => {
+    console.log("Yippee!");
+  }, [listRender]);
+
+  useEffect(() => {
     if (isOpen && !isHovered) {
       onClose();
     } else if (zMoreButton === 2) {
@@ -152,10 +156,13 @@ const SongButton = ({
             <Editable
               isPreviewFocusable={previewFocusable}
               ref={editableRef}
-              defaultValue={todo.description}
+              value={todo.description}
               placeholder={"Unnamed song"}
               selectAllOnFocus={false}
-              onChange={(nextValue) => setDescription(nextValue)}
+              onChange={(nextValue) => {
+                setDescription(nextValue);
+                todo.description = nextValue;
+              }}
               onSubmit={() => {
                 updateDescription();
               }}
