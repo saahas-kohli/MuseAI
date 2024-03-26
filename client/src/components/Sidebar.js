@@ -35,6 +35,8 @@ const Sidebar = ({
   setSelectedSong,
   listRender,
   setListRender,
+  currentUser,
+  setCurrentUser,
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
 
@@ -42,7 +44,8 @@ const Sidebar = ({
     e.preventDefault();
     try {
       const body = { defaultDescription };
-      const response = await fetch("http://localhost:9000/todos", {
+      const user = currentUser;
+      const response = await fetch(`http://localhost:9000/todos/${user}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -120,6 +123,8 @@ const Sidebar = ({
               setListRender={setListRender}
               selectedSong={selectedSong}
               setSelectedSong={setSelectedSong}
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
             ></ListSongs>
           </Box>
         </Box>

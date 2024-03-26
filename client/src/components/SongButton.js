@@ -42,6 +42,8 @@ const SongButton = ({
   deleteFromList,
   selectedSong,
   setSelectedSong,
+  currentUser,
+  setCurrentUser,
 }) => {
   const [description, setDescription] = useState(todo.description);
   const [beingEdited, setBeingEdited] = useState(false);
@@ -52,10 +54,6 @@ const SongButton = ({
   const containerRef = useRef(null);
   const editableRef = useRef(null);
   const previewRef = useRef(null);
-
-  useEffect(() => {
-    console.log("Yippee!");
-  }, [listRender]);
 
   useEffect(() => {
     if (isOpen && !isHovered) {
@@ -86,9 +84,9 @@ const SongButton = ({
     try {
       setPreviewFocusable(false);
       const body = { description };
-
+      const user = currentUser;
       const response = await fetch(
-        `http://localhost:9000/todos/${todo.todo_id}`,
+        `http://localhost:9000/todos/${user}/${todo.todo_id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

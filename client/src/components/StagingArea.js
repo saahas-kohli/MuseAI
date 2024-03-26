@@ -12,7 +12,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { Spinner } from "@chakra-ui/react";
 import { CircularProgress, CircularProgressLabel } from "@chakra-ui/react";
 import { BsGithub } from "react-icons/bs";
-import { Text, Icon, IconButton } from "@chakra-ui/react";
+import { Text, Icon, IconButton, Image } from "@chakra-ui/react";
 import {
   Popover,
   PopoverTrigger,
@@ -44,7 +44,7 @@ const OpeningMessage = () => {
       <Box
         bottom="0"
         width="80%" // Adjusted width for a larger box
-        height="300px" // Specify a height to make the box larger
+        height="350px" // Specify a height to make the box larger
         marginLeft="7%" // Adjusted to keep the box centered with the new width
         marginBottom={35}
         borderRadius="20px" // Added rounded edges
@@ -58,7 +58,14 @@ const OpeningMessage = () => {
           fontWeight="semibold"
           fontSize="24px"
         >
-          What would you like to listen to?
+          <Image
+            marginLeft="31.5%"
+            marginBottom="3%"
+            borderRadius="full"
+            boxSize="50px"
+            src="https://play-lh.googleusercontent.com/6QkECIyICDde6Mfq7r9dazvuyCvUXZN5m93WbO4CrwwbSSkOS-myvwvAafPfDnbdATE"
+          ></Image>
+          <Box>What would you like to listen to?</Box>
         </Box>
       </Box>
     </>
@@ -132,7 +139,13 @@ const Output = ({ canvas, audioSrc, audioRef }) => {
   );
 };
 
-const StagingArea = ({ selectedSong, listRender, setListRender }) => {
+const StagingArea = ({
+  selectedSong,
+  listRender,
+  setListRender,
+  currentUser,
+  setCurrentUser,
+}) => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const [ws, setWs] = useState(null);
   const canvas = useRef(null);
@@ -507,6 +520,8 @@ const StagingArea = ({ selectedSong, listRender, setListRender }) => {
           selectedSong={selectedSong}
           listRender={listRender}
           setListRender={setListRender}
+          currentUser={currentUser}
+          setCurrentUser={setCurrentUser}
         />
       </Box>
       <Box
@@ -531,6 +546,8 @@ const AutosizeTextarea = ({
   selectedSong,
   listRender,
   setListRender,
+  currentUser,
+  setCurrentUser,
 }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
@@ -555,9 +572,10 @@ const AutosizeTextarea = ({
   const updateDescription = async (description) => {
     try {
       const body = { description };
+      const user = currentUser;
       setListRender(!listRender);
       const response = await fetch(
-        `http://localhost:9000/todos/${selectedSong}`,
+        `http://localhost:9000/todos/${user}/${selectedSong}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

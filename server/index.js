@@ -9,14 +9,15 @@ app.use(express.json());
 
 //ROUTES
 
-//create a todo
+//create a todo for a user
 
-app.post("/todos", async (req, res) => {
+app.post("/todos/:user", async (req, res) => {
   try {
     const { defaultDescription } =
       req.body; /* this variable must have the same name as whatever key is in req.body! */
+    const { user } = req.params;
     const newTodo = await pool.query(
-      "INSERT INTO todo (description) VALUES($1) RETURNING *",
+      `INSERT INTO ${user} (description) VALUES($1) RETURNING *`,
       [defaultDescription]
     );
     res.json(newTodo.rows[0]);
@@ -25,23 +26,45 @@ app.post("/todos", async (req, res) => {
   }
 });
 
-//get all todos
+//create a user
 
-app.get("/todos", async (req, res) => {
+app.post("/todos/:email/:password", async (req, res) => {
   try {
-    const allTodos = await pool.query("SELECT * FROM todo");
+    const { email, password } = req.params;
+    const lowercaseEmail = email.toLowerCase();
+    const newUser = await pool.query(
+      `CREATE TABLE $1(todo_id SERIAL PRIMARY KEY, description VARCHAR(255));`,
+      [lowercaseEmail]
+    );
+    const newIdentifier = await pool.query(
+      `INSERT INTO authentication (email, password) VALUES($1, $2);`,
+      [lowercaseEmail, password]
+    );
+    res.json("New user created!");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//get all todos for a user
+
+app.get("/todos/:user", async (req, res) => {
+  try {
+    const { user } = req.params;
+    const allTodos = await pool.query(`SELECT * FROM ${user}`);
     res.json(allTodos.rows);
   } catch (err) {
     console.error(err.message);
   }
 });
 
-//get a todo
+//get a todo for a user
 
-app.get("/todos/:id", async (req, res) => {
+app.get("/todos/:user/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [
+    const { user } = req.params;
+    const todo = await pool.query(`SELECT * FROM ${user} WHERE todo_id = $1`, [
       id,
     ]);
     res.json(todo.rows[0]);
@@ -50,14 +73,43 @@ app.get("/todos/:id", async (req, res) => {
   }
 });
 
-//update a todo
+// get (authenticate) a user
 
-app.put("/todos/:id", async (req, res) => {
+app.get("/todos/:email/:password", async (req, res) => {
+  try {
+    const { email, password } = req.params;
+    const lowercaseEmail = email.toLowerCase();
+    const selectedEmail = await pool.query(
+      `SELECT * FROM authentication WHERE email = $1;`,
+      [lowercaseEmail]
+    );
+    if (selectedUser.rowCount > 0) {
+      const selectedUser = await pool.query(
+        `SELECT email, password FROM authentication WHERE email = $1 AND password = $2;`,
+        [lowercaseEmail, password]
+      );
+      if (selectedUser.rowCount > 0) {
+        res.json({ emailExists: true, userExists: true });
+      } else {
+        res.json({ emailExists: true, userExists: false });
+      }
+    } else {
+      res.json({ emailExists: false, userExists: false });
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//update a todo for a user
+
+app.put("/todos/:user/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    const { user } = req.params;
     const { description } = req.body;
     const updateTodo = await pool.query(
-      "UPDATE todo SET description = $1 WHERE todo_id = $2",
+      `UPDATE ${user} SET description = $1 WHERE todo_id = $2`,
       [description, id]
     );
     res.json("Todo was updated!");
@@ -66,14 +118,16 @@ app.put("/todos/:id", async (req, res) => {
   }
 });
 
-//delete a todo
+//delete a todo for a user
 
-app.delete("/todos/:id", async (req, res) => {
+app.delete("/todos/:user/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const deleteTodo = await pool.query("DELETE FROM todo WHERE todo_id = $1", [
-      id,
-    ]);
+    const { user } = req.params;
+    const deleteTodo = await pool.query(
+      `DELETE FROM ${user} WHERE todo_id = $1`,
+      [id]
+    );
     res.json("Todo was deleted!");
   } catch (err) {
     console.error(err.message);

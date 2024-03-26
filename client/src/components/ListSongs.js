@@ -9,14 +9,17 @@ function ListSongs({
   setListRender,
   selectedSong,
   setSelectedSong,
+  currentUser,
+  setCurrentUser,
 }) {
   const [todos, setTodos] = useState([]);
 
   //delete function
   const deleteFromList = async (id) => {
     try {
+      const user = currentUser;
       setTodos(todos.filter((todo) => todo.todo_id !== id));
-      const delTodo = await fetch(`http://localhost:9000/todos/${id}`, {
+      const delTodo = await fetch(`http://localhost:9000/todos/${user}/${id}`, {
         method: "DELETE",
       });
     } catch (err) {
@@ -26,7 +29,8 @@ function ListSongs({
 
   const getTodos = async () => {
     try {
-      const response = await fetch("http://localhost:9000/todos");
+      const user = currentUser;
+      const response = await fetch(`http://localhost:9000/todos/${user}`);
       const jsonData = await response.json();
 
       setTodos(jsonData);
@@ -55,6 +59,8 @@ function ListSongs({
               setSelectedSong={setSelectedSong}
               listRender={listRender}
               setListRender={setListRender}
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
             />
           </ListItem>
         ))}
