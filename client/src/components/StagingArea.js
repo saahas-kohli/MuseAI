@@ -163,6 +163,7 @@ const StagingArea = ({
 
   useEffect(() => {
     if (canvas.current && audioRef.current) {
+      console.log("Actually rendering canvas");
       const audioElement = audioRef.current;
       canvas.current.over = false;
       // Perform canvas operations here
@@ -234,13 +235,13 @@ const StagingArea = ({
       }
 
       // Start the audio once at the beginning by default
-      audio1.play();
+      // audio1.play();
 
       audioSource = audioCtx.createMediaElementSource(audio1);
       analyser = audioCtx.createAnalyser();
       audioSource.connect(analyser);
       analyser.connect(audioCtx.destination);
-      analyser.fftSize = 64;
+      analyser.fftSize = 32;
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
 
@@ -248,7 +249,7 @@ const StagingArea = ({
       let barHeight;
       let x;
 
-      handlePlay();
+      //handlePlay();
 
       // function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
       //   const maxBarHeight = Math.max(...dataArray);
@@ -351,29 +352,98 @@ const StagingArea = ({
     }
   }, [canvasReady, audioRef]); // This effect depends on canvas.current
 
+  /*
   useEffect(() => {
-    // Initialize WebSocket connection
-    const newWs = new WebSocket("ws://localhost:6789");
+    console.log(selectedSong);
+  }, [selectedSong]);
+  */
 
+  // Send a fetch request to Express event handler
+  const updateAudio = async () => {
+    try {
+      const user = currentUser;
+      //console.log(selectedSong);
+      const id = selectedSong;
+      const audioData = data.output;
+      //console.log(audioData.substring(0, 20) + " " + audioData.length);
+      const body = { audioData };
+      const response = await fetch(
+        `http://localhost:9000/audio/${user}/${id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  // Send a fetch request to Express event handler
+  const getAudio = async () => {
+    try {
+      const user = currentUser;
+      const id = selectedSong;
+      const response = await fetch(`http://localhost:9000/audio/${user}/${id}`);
+      const jsonData = await response.json();
+      if (jsonData.exists && jsonData.audioData !== null) {
+        data = { output: "" };
+        data.output = jsonData.audioData;
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    const newWs = new WebSocket("ws://localhost:6789");
     newWs.onmessage = (event) => {
+      //console.log(selectedSong);
       setRenderingVisibility(false);
       setOutputVisibility(true);
 
+      // Data.output changes here
       data = JSON.parse(event.data);
+
       // console.log("This is the music data log!");
       // console.log(data.output.slice(0, 20));
+      updateAudio();
+
       prepareCanvas();
     };
-
     setWs(newWs);
+  }, []);
+
+  useEffect(() => {
+    setOutputVisibility(false);
+    setCanvasReady(false);
+    setTimeout(() => {}, 100);
+    async function myFunc() {
+      console.log("Attempt fetch audio");
+      const audioRetrieved = await getAudio();
+      if (audioRetrieved) {
+        console.log("Preparing canvas");
+        //setRenderingVisibility(false);
+        setOutputVisibility(true);
+        prepareCanvas();
+      }
+    }
+    myFunc();
+
+    //setWs(newWs);
 
     // Cleanup on component unmount
+    /*
     return () => {
       if (newWs) {
         newWs.close();
       }
     };
-  }, []);
+    */
+  }, [selectedSong]);
 
   const prepareCanvas = () => {
     // if (canvas.current) {
@@ -392,8 +462,8 @@ const StagingArea = ({
     setCanvasReady(false);
     setRenderingVisibility(true);
     if (ws && ws.readyState === WebSocket.OPEN) {
-      const data = { prompt: musicDescription };
-      ws.send(JSON.stringify(data));
+      const thisData = { prompt: musicDescription };
+      ws.send(JSON.stringify(thisData));
     } else {
       console.error("WebSocket is not connected.");
     }
@@ -593,22 +663,22 @@ const AutosizeTextarea = ({
       e.preventDefault();
       const textarea = ref.current;
       const temp = textarea.value;
+      updateDescription(temp);
       setEnteredDesc(textarea.value);
       runMusicGen(textarea.value);
       textarea.value = "";
       setButtonDarkened(false);
-      updateDescription(temp);
     }
   };
 
   const handleEnterButton = () => {
     const textarea = ref.current;
     const temp = textarea.value;
+    updateDescription(temp);
     setEnteredDesc(textarea.value);
     runMusicGen(textarea.value);
     textarea.value = "";
     setButtonDarkened(false);
-    updateDescription(temp);
   };
 
   const handleChange = () => {

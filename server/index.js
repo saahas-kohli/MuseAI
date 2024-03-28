@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const bodyParser = require("body-parser");
+app.use(bodyParser.json({ limit: "10mb" }));
 
 //middleware
 app.use(cors());
@@ -9,7 +11,7 @@ app.use(express.json());
 
 //ROUTES
 
-//create a todo for a user
+//add song description for a user (create song for first time)
 
 app.post("/todos/:user", async (req, res) => {
   try {
@@ -21,6 +23,27 @@ app.post("/todos/:user", async (req, res) => {
       [defaultDescription]
     );
     res.json(newTodo.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//add audio data for a user
+
+app.post("/audio/:user/:id", async (req, res) => {
+  try {
+    console.log("Request received!");
+    const { audioData } =
+      req.body; /* this variable must have the same name as whatever key is in req.body! */
+    const { user } = req.params;
+    const { id } = req.params;
+    console.log(typeof audioData);
+    const newTodo = await pool.query(
+      `UPDATE ${user} SET audio = $1 WHERE todo_id = $2;`,
+      [audioData, id]
+    );
+    console.log(newTodo);
+    res.json("Audio added!");
   } catch (err) {
     console.error(err.message);
   }
@@ -73,6 +96,26 @@ app.get("/todos/:user/:id", async (req, res) => {
   }
 });
 
+// get audio for a user
+
+app.get("/audio/:user/:id", async (req, res) => {
+  try {
+    const { user } = req.params;
+    const { id } = req.params;
+    if (id === "-1") {
+      res.json({ exists: false, audioData: "invalid id" });
+    } else {
+      const data = await pool.query(
+        `SELECT audio FROM ${user} WHERE todo_id = $1;`,
+        [id]
+      );
+      res.json({ exists: true, audioData: data.rows[0].audio });
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 // get (authenticate) a user
 
 app.get("/todos/:email/:password", async (req, res) => {
@@ -83,7 +126,7 @@ app.get("/todos/:email/:password", async (req, res) => {
       `SELECT * FROM authentication WHERE email = $1;`,
       [lowercaseEmail]
     );
-    if (selectedUser.rowCount > 0) {
+    if (selectedEmail.rowCount > 0) {
       const selectedUser = await pool.query(
         `SELECT email, password FROM authentication WHERE email = $1 AND password = $2;`,
         [lowercaseEmail, password]
@@ -109,7 +152,7 @@ app.put("/todos/:user/:id", async (req, res) => {
     const { user } = req.params;
     const { description } = req.body;
     const updateTodo = await pool.query(
-      `UPDATE ${user} SET description = $1 WHERE todo_id = $2`,
+      `UPDATE ${user} SET description = $1 WHERE todo_id = $2;`,
       [description, id]
     );
     res.json("Todo was updated!");
@@ -125,7 +168,7 @@ app.delete("/todos/:user/:id", async (req, res) => {
     const { id } = req.params;
     const { user } = req.params;
     const deleteTodo = await pool.query(
-      `DELETE FROM ${user} WHERE todo_id = $1`,
+      `DELETE FROM ${user} WHERE todo_id = $1;`,
       [id]
     );
     res.json("Todo was deleted!");
