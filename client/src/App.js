@@ -72,6 +72,8 @@ function App() {
                         setListRender={setListRender}
                         currentUser={currentUser}
                         setCurrentUser={setCurrentUser}
+                        loggedIn={loggedIn}
+                        setLoggedIn={setLoggedIn}
                       ></Sidebar>
                     </Box>
                   </Box>

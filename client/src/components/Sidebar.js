@@ -6,6 +6,7 @@ import { Container, Center } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/react";
 import { MdLibraryMusic } from "react-icons/md";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { IconButton, Avatar } from "@chakra-ui/react";
 import { avatarAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers, defineStyle } from "@chakra-ui/react";
@@ -14,7 +15,10 @@ import { MdMoreHoriz } from "react-icons/md";
 import { BsPinAngleFill } from "react-icons/bs";
 import { EditIcon } from "@chakra-ui/icons";
 import { GoTrash } from "react-icons/go";
-import { MdOutlineLogout } from "react-icons/md";
+import { CiLogin } from "react-icons/ci";
+import { CiLogout } from "react-icons/ci";
+import { AiOutlineUser } from "react-icons/ai";
+import { BsFillPersonFill } from "react-icons/bs";
 import { BsGear } from "react-icons/bs";
 import {
   Menu,
@@ -37,8 +41,11 @@ const Sidebar = ({
   setListRender,
   currentUser,
   setCurrentUser,
+  loggedIn,
+  setLoggedIn,
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
+  const navigate = useNavigate();
 
   const addToList = async (e) => {
     e.preventDefault();
@@ -146,13 +153,21 @@ const Sidebar = ({
           >
             <Flex marginLeft="-8.5px">
               <Box>
-                <Avatar
-                  background="green"
-                  textColor="white"
-                  size="sm"
-                  name="Saahas Kohli"
-                  src=""
-                />
+                {currentUser === "todo" ? (
+                  <Avatar
+                    bg="black"
+                    size="sm"
+                    icon={<BsFillPersonFill fontSize="0.875rem" />}
+                  />
+                ) : (
+                  <Avatar
+                    bg="black"
+                    textColor="white"
+                    size="sm"
+                    name={currentUser}
+                    src=""
+                  />
+                )}
               </Box>
               <Box
                 fontSize="14px"
@@ -161,7 +176,9 @@ const Sidebar = ({
                 marginTop="7.5px"
                 marginLeft="7px"
               >
-                Saahas Kohli
+                {currentUser === "todo"
+                  ? "Guest"
+                  : currentUser.substring(0, currentUser.indexOf("@"))}
               </Box>
             </Flex>
           </MenuButton>
@@ -202,18 +219,32 @@ const Sidebar = ({
               _focus={{ outline: "none" }}
               icon={
                 <Icon
-                  as={MdOutlineLogout}
+                  as={currentUser === "todo" ? CiLogin : CiLogout}
                   marginBottom="1.5px"
                   boxSize={5}
                 ></Icon>
               }
               iconSpacing="9px"
+              onClick={() => {
+                if (currentUser === "todo") {
+                  navigate("/login");
+                } else {
+                  setLoggedIn(false);
+                  navigate("/login");
+                }
+              }}
             >
-              Log out
+              {currentUser === "todo" ? "Log in" : "Log out"}
             </MenuItem>
-            <Box fontSize="11px" color="#9A9B9A" marginLeft="16px">
-              {"("}saahask@gmail.com{")"}
-            </Box>
+            {currentUser === "todo" ? (
+              <></>
+            ) : (
+              <Box fontSize="11px" color="#9A9B9A" marginLeft="16px">
+                {"("}
+                {currentUser}
+                {")"}
+              </Box>
+            )}
           </MenuList>
         </Menu>
       </Box>

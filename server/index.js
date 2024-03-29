@@ -105,14 +105,16 @@ app.get("/audio/:user/:id", async (req, res) => {
   try {
     const { user } = req.params;
     const { id } = req.params;
-    if (id === "-1") {
+    if (id === "-1" || id === -1) {
       res.json({ exists: false, audioData: "invalid id" });
     } else {
       const data = await pool.query(
         `SELECT audio FROM "${user}" WHERE todo_id = $1;`,
         [id]
       );
-      res.json({ exists: true, audioData: data.rows[0].audio });
+      if (data.rows.length === 0)
+        res.json({ exists: false, audioData: "invalid id" });
+      else res.json({ exists: true, audioData: data.rows[0].audio });
     }
   } catch (err) {
     console.error(err.message);
