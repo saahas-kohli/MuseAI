@@ -25,6 +25,8 @@ const validator = require("validator");
 
 const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const [emailText, setEmailText] = useState("");
+  const [emailInvalid, setEmailInvalid] = useState(false);
+  const [dupEmailExists, setDupEmailExists] = useState(false);
   const [passwordText, setPasswordText] = useState("");
   const [confirmText, setConfirmText] = useState("");
   const navigate = useNavigate();
@@ -39,6 +41,35 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
       );
     } catch (err) {
       console.error(err.message);
+    }
+  };
+
+  const emailExists = async (email, password) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/users/${email}/${password}`
+      );
+      const jsonData = await response.json();
+      if (jsonData.emailExists) {
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const checkEmailValidity = async (email, password) => {
+    if (email === "") {
+      setEmailInvalid(false);
+      setDupEmailExists(false);
+    } else if (!validator.isEmail(email)) {
+      setEmailInvalid(true);
+      setDupEmailExists(false);
+    } else {
+      const result = await emailExists(email, password);
+      setEmailInvalid(result);
+      setDupEmailExists(result);
     }
   };
 
@@ -104,17 +135,22 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
           >
             <Stack spacing="3">
               <Stack spacing="5">
-                <FormControl
-                  isInvalid={emailText !== "" && !validator.isEmail(emailText)}
-                >
+                <FormControl isInvalid={emailInvalid}>
                   <FormLabel htmlFor="email">Email</FormLabel>
                   <Input
                     id="email"
                     type="email"
                     value={emailText}
-                    onChange={(e) => setEmailText(e.target.value)}
+                    onChange={(e) => {
+                      setEmailText(e.target.value);
+                      checkEmailValidity(e.target.value, "f");
+                    }}
                   />
-                  <FormErrorMessage>Email format is invalid.</FormErrorMessage>
+                  <FormErrorMessage>
+                    {dupEmailExists
+                      ? "Email is already in use."
+                      : "Email format is invalid."}
+                  </FormErrorMessage>
                 </FormControl>
                 <PasswordField
                   passwordText={passwordText}
@@ -139,7 +175,8 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                     if (
                       validator.isEmail(emailText) &&
                       passwordText !== "" &&
-                      passwordText === confirmText
+                      passwordText === confirmText &&
+                      !emailInvalid
                     ) {
                       createUser(emailText, passwordText);
                       //setCurrentUser(emailText);
