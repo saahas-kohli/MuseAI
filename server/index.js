@@ -19,7 +19,7 @@ app.post("/todos/:user", async (req, res) => {
       req.body; /* this variable must have the same name as whatever key is in req.body! */
     const { user } = req.params;
     const newTodo = await pool.query(
-      `INSERT INTO ${user} (description) VALUES($1) RETURNING *`,
+      `INSERT INTO "${user}" (description) VALUES($1) RETURNING *;`,
       [defaultDescription]
     );
     res.json(newTodo.rows[0]);
@@ -37,12 +37,15 @@ app.post("/audio/:user/:id", async (req, res) => {
       req.body; /* this variable must have the same name as whatever key is in req.body! */
     const { user } = req.params;
     const { id } = req.params;
-    console.log(typeof audioData);
+    //console.log(typeof audioData);
+    console.log(user);
+    console.log(audioData.substring(0, 5));
+    console.log(id);
     const newTodo = await pool.query(
-      `UPDATE ${user} SET audio = $1 WHERE todo_id = $2;`,
+      `UPDATE "${user}" SET audio = $1 WHERE todo_id = $2;`,
       [audioData, id]
     );
-    console.log(newTodo);
+    //console.log(newTodo);
     res.json("Audio added!");
   } catch (err) {
     console.error(err.message);
@@ -56,8 +59,7 @@ app.post("/todos/:email/:password", async (req, res) => {
     const { email, password } = req.params;
     const lowercaseEmail = email.toLowerCase();
     const newUser = await pool.query(
-      `CREATE TABLE $1(todo_id SERIAL PRIMARY KEY, description VARCHAR(255));`,
-      [lowercaseEmail]
+      `CREATE TABLE "${lowercaseEmail}" (todo_id SERIAL PRIMARY KEY, description VARCHAR(255), audio TEXT);`
     );
     const newIdentifier = await pool.query(
       `INSERT INTO authentication (email, password) VALUES($1, $2);`,
@@ -74,7 +76,7 @@ app.post("/todos/:email/:password", async (req, res) => {
 app.get("/todos/:user", async (req, res) => {
   try {
     const { user } = req.params;
-    const allTodos = await pool.query(`SELECT * FROM ${user}`);
+    const allTodos = await pool.query(`SELECT * FROM "${user}";`);
     res.json(allTodos.rows);
   } catch (err) {
     console.error(err.message);
@@ -87,9 +89,10 @@ app.get("/todos/:user/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { user } = req.params;
-    const todo = await pool.query(`SELECT * FROM ${user} WHERE todo_id = $1`, [
-      id,
-    ]);
+    const todo = await pool.query(
+      `SELECT * FROM "${user}" WHERE todo_id = $1;`,
+      [id]
+    );
     res.json(todo.rows[0]);
   } catch (err) {
     console.error(err.message);
@@ -106,7 +109,7 @@ app.get("/audio/:user/:id", async (req, res) => {
       res.json({ exists: false, audioData: "invalid id" });
     } else {
       const data = await pool.query(
-        `SELECT audio FROM ${user} WHERE todo_id = $1;`,
+        `SELECT audio FROM "${user}" WHERE todo_id = $1;`,
         [id]
       );
       res.json({ exists: true, audioData: data.rows[0].audio });
@@ -118,12 +121,12 @@ app.get("/audio/:user/:id", async (req, res) => {
 
 // get (authenticate) a user
 
-app.get("/todos/:email/:password", async (req, res) => {
+app.get("/users/:email/:password", async (req, res) => {
   try {
     const { email, password } = req.params;
     const lowercaseEmail = email.toLowerCase();
     const selectedEmail = await pool.query(
-      `SELECT * FROM authentication WHERE email = $1;`,
+      `SELECT email, password FROM authentication WHERE email = $1;`,
       [lowercaseEmail]
     );
     if (selectedEmail.rowCount > 0) {
@@ -152,7 +155,7 @@ app.put("/todos/:user/:id", async (req, res) => {
     const { user } = req.params;
     const { description } = req.body;
     const updateTodo = await pool.query(
-      `UPDATE ${user} SET description = $1 WHERE todo_id = $2;`,
+      `UPDATE "${user}" SET description = $1 WHERE todo_id = $2;`,
       [description, id]
     );
     res.json("Todo was updated!");
@@ -168,7 +171,7 @@ app.delete("/todos/:user/:id", async (req, res) => {
     const { id } = req.params;
     const { user } = req.params;
     const deleteTodo = await pool.query(
-      `DELETE FROM ${user} WHERE todo_id = $1;`,
+      `DELETE FROM "${user}" WHERE todo_id = $1;`,
       [id]
     );
     res.json("Todo was deleted!");

@@ -105,6 +105,7 @@ const RenderingMessage = () => {
 };
 
 let data = "Default value";
+let ws = new WebSocket("ws://localhost:6789");
 
 const Output = ({ canvas, audioSrc, audioRef }) => {
   return (
@@ -147,7 +148,6 @@ const StagingArea = ({
   setCurrentUser,
 }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
-  const [ws, setWs] = useState(null);
   const canvas = useRef(null);
   // Control components flashing on and off the screen to make transitions look better
   const [messageVisible, setMessageVisibility] = useState(true);
@@ -399,8 +399,7 @@ const StagingArea = ({
   };
 
   useEffect(() => {
-    const newWs = new WebSocket("ws://localhost:6789");
-    newWs.onmessage = (event) => {
+    ws.onmessage = (event) => {
       //console.log(selectedSong);
       setRenderingVisibility(false);
       setOutputVisibility(true);
@@ -414,8 +413,7 @@ const StagingArea = ({
 
       prepareCanvas();
     };
-    setWs(newWs);
-  }, []);
+  }, [currentUser, selectedSong]);
 
   useEffect(() => {
     setOutputVisibility(false);

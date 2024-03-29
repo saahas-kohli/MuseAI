@@ -16,6 +16,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import OAuthButtonGroup from "./OAuthButtonGroup.js";
 import PasswordField from "./PasswordField.js";
 import ConfirmPasswordField from "./ConfirmPasswordField.js";
@@ -26,6 +27,20 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const [emailText, setEmailText] = useState("");
   const [passwordText, setPasswordText] = useState("");
   const [confirmText, setConfirmText] = useState("");
+  const navigate = useNavigate();
+
+  const createUser = async (email, password) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/todos/${email}/${password}`,
+        {
+          method: "POST",
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   return (
     <Box bg="#FDFCFE">
@@ -120,7 +135,19 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                   fontWeight={500}
                   borderRadius="8px"
                   colorScheme="telegram"
-                  onClick={() => {}}
+                  onClick={() => {
+                    if (
+                      validator.isEmail(emailText) &&
+                      passwordText !== "" &&
+                      passwordText === confirmText
+                    ) {
+                      createUser(emailText, passwordText);
+                      //setCurrentUser(emailText);
+                      setTimeout(() => {
+                        navigate("/login");
+                      }, 200);
+                    }
+                  }}
                 >
                   Create account
                 </Button>
