@@ -241,46 +241,14 @@ const StagingArea = ({
       analyser = audioCtx.createAnalyser();
       audioSource.connect(analyser);
       analyser.connect(audioCtx.destination);
-      analyser.fftSize = 32;
+      analyser.fftSize = 128;
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
 
-      const barWidth = canvas.current.width / bufferLength;
+      const barWidth =
+        (canvas.current.width - canvas.current.width / 12) / bufferLength;
       let barHeight;
       let x;
-
-      //handlePlay();
-
-      // function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
-      //   const maxBarHeight = Math.max(...dataArray);
-      //   for (let i = 0; i < bufferLength; i++) {
-
-      //     let value = dataArray[i] > 0 ? Math.log10(dataArray[i]) : 0;
-      //     let normalizedHeight = value / Math.log10(maxBarHeight);
-      //     let barHeight = normalizedHeight * canvas.current.height;
-      //     if (barHeight == 0) {
-      //       barHeight = 200 * (1 / i)
-      //     }
-
-      //     // Create the gradient for this bar
-      //     let gradientStartY = canvas.current.height - barHeight;
-      //     let gradientEndY = canvas.current.height;
-
-      //     // Ensure that the start and end Y positions are finite numbers
-      //     if (!Number.isFinite(gradientStartY) || !Number.isFinite(gradientEndY)) {
-      //       continue; // Skip this iteration
-      //     }
-
-      //     let gradient = ctx.createLinearGradient(0, gradientStartY, 0, gradientEndY);
-      //     gradient.addColorStop(0, 'rgb(239, 246, 5)'); // Yellow at the top
-      //     gradient.addColorStop(1, 'rgb(148, 0, 211)'); // Purple at the bottom
-
-      //     ctx.fillStyle = gradient;
-      //     ctx.fillRect(x, gradientStartY, barWidth, barHeight);
-
-      //     x += barWidth;
-      //   }
-      // }
 
       function drawVisualizer(bufferLength, x, barWidth, barHeight, dataArray) {
         const maxBarHeight = Math.max(...dataArray);
@@ -295,7 +263,9 @@ const StagingArea = ({
           let normalizedHeight = value / Math.pow(maxBarHeight, exponent);
 
           // Make sure the bar height is at least a random small value to be visible
-          let barHeight = normalizedHeight * canvas.current.height;
+          let barHeight =
+            normalizedHeight *
+            (canvas.current.height - canvas.current.height / 15);
           if (barHeight <= 1) {
             barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
           }
@@ -312,27 +282,56 @@ const StagingArea = ({
             continue; // Skip this iteration
           }
 
-          let gradient = ctx.createLinearGradient(
-            0,
-            gradientStartY,
-            0,
-            gradientEndY
-          );
-          gradient.addColorStop(0, "rgb(255, 235, 205)"); // Fainter yellow at the bottom
-          gradient.addColorStop(1, "rgb(128, 0, 128)"); // Purple at the top
+          const vertical = dataArray[i] * 3;
+          const red = (i * vertical) / 20;
+          const green = i * 4;
+          const blue = vertical / 2;
+          ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
 
-          ctx.fillStyle = gradient;
-          ctx.fillRect(x, gradientStartY, barWidth, barHeight);
+          // KEEP THIS
+          // ctx.fillRect(x, gradientStartY, barWidth, barHeight);
+
+          // Start drawing the bar with rounded top
+          ctx.beginPath();
+
+          // Move to the bottom left corner of the bar
+          ctx.moveTo(x, gradientEndY);
+
+          // Draw the left side of the bar
+          ctx.lineTo(x, gradientStartY + barWidth / 2); // Adjust for the radius of the top corner
+
+          // Draw the rounded top
+          ctx.arcTo(
+            x,
+            gradientStartY,
+            x + barWidth / 2,
+            gradientStartY,
+            barWidth / 2
+          ); // Top left corner
+          ctx.arcTo(
+            x + barWidth,
+            gradientStartY,
+            x + barWidth,
+            gradientStartY + barWidth / 2,
+            barWidth / 2
+          ); // Top right corner
+
+          // Draw the right side of the bar
+          ctx.lineTo(x + barWidth, gradientEndY);
+
+          // Close the path and fill the bar
+          ctx.closePath();
+          ctx.fill();
 
           // Move to the next bar's x position
-          x += barWidth;
+          x += barWidth + 0.25;
         }
       }
 
       function animate() {
         // console.log("Animate was run");
         // x = 0;
-        x = 0;
+        x = 10;
         ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
         analyser.getByteFrequencyData(dataArray);
         // console.log(dataArray);
