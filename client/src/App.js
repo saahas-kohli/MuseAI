@@ -1,6 +1,7 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import React, { useRef, useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -22,6 +23,7 @@ const theme = extendTheme({
 
 function App() {
   const [selectedSong, setSelectedSong] = useState(-1);
+  const [canSwitchSongs, setCanSwitchSongs] = useState(true);
   const [listRender, setListRender] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState("todo");
@@ -74,6 +76,8 @@ function App() {
                         setCurrentUser={setCurrentUser}
                         loggedIn={loggedIn}
                         setLoggedIn={setLoggedIn}
+                        canSwitchSongs={canSwitchSongs}
+                        setCanSwitchSongs={setCanSwitchSongs}
                       ></Sidebar>
                     </Box>
                   </Box>
@@ -84,6 +88,8 @@ function App() {
                       setListRender={setListRender}
                       currentUser={currentUser}
                       setCurrentUser={setCurrentUser}
+                      canSwitchSongs={canSwitchSongs}
+                      setCanSwitchSongs={setCanSwitchSongs}
                     />
                   </Box>
                 </Flex>

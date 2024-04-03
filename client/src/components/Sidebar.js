@@ -43,6 +43,8 @@ const Sidebar = ({
   setCurrentUser,
   loggedIn,
   setLoggedIn,
+  canSwitchSongs,
+  setCanSwitchSongs
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
   const navigate = useNavigate();
@@ -132,6 +134,8 @@ const Sidebar = ({
               setSelectedSong={setSelectedSong}
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
+              canSwitchSongs={canSwitchSongs}
+              setCanSwitchSongs={setCanSwitchSongs}
             ></ListSongs>
           </Box>
         </Box>

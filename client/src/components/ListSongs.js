@@ -11,6 +11,8 @@ function ListSongs({
   setSelectedSong,
   currentUser,
   setCurrentUser,
+  canSwitchSongs,
+  setCanSwitchSongs
 }) {
   const [todos, setTodos] = useState([]);
 
@@ -61,6 +63,8 @@ function ListSongs({
               setListRender={setListRender}
               currentUser={currentUser}
               setCurrentUser={setCurrentUser}
+              canSwitchSongs={canSwitchSongs}
+              setCanSwitchSongs={setCanSwitchSongs}
             />
           </ListItem>
         ))}

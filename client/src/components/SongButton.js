@@ -44,6 +44,8 @@ const SongButton = ({
   setSelectedSong,
   currentUser,
   setCurrentUser,
+  canSwitchSongs,
+  setCanSwitchSongs
 }) => {
   const [description, setDescription] = useState(todo.description);
   const [beingEdited, setBeingEdited] = useState(false);
@@ -107,7 +109,9 @@ const SongButton = ({
       <Button
         onKeyUp={(e) => e.preventDefault()}
         onClick={() => {
-          setSelectedSong(todo.todo_id);
+          if(canSwitchSongs) {
+            setSelectedSong(todo.todo_id);
+          }
         }}
         width="92.25%"
         height="36px"
