@@ -107,7 +107,9 @@ const RenderingMessage = () => {
 let data = "Default value";
 let ws = new WebSocket("ws://localhost:6789");
 
-const Output = ({ canvas, audioSrc, audioRef, play, setPlay }) => {
+const Output = ({ canvas, audioSrc, audioRef }) => {
+  const [playing, setPlaying] = useState(false);
+
   return (
     <>
       <Box
@@ -134,16 +136,30 @@ const Output = ({ canvas, audioSrc, audioRef, play, setPlay }) => {
       <Box bottom="0" width="50.75%" marginLeft="20%" marginBottom={135}>
         <Flex justifyContent="center" alignItems="center" height="100%">
           <audio id="player" src={audioSrc} ref={audioRef}></audio>
-          <Box> 
-            <Button onClick={() => document.getElementById('player').play()}>Play</Button> 
-            <Button onClick={() => document.getElementById('player').pause()}>Pause</Button> 
+          <Box>
+            <Button
+              onClick={() => {
+                const audioPlayer = document.getElementById("player");
+                if (playing) {
+                  audioPlayer.pause();
+                } else {
+                  audioPlayer.play();
+                }
+                setPlaying(!playing);
+              }}
+              colorScheme={playing ? "red" : "green"}
+            >
+              {playing ? "Pause" : "Play"}
+            </Button>
+            <Link href={audioSrc} download>
+              <Button>Download</Button>
+            </Link>
           </Box>
         </Flex>
       </Box>
     </>
   );
 };
-
 
 const StagingArea = ({
   selectedSong,
@@ -152,7 +168,7 @@ const StagingArea = ({
   currentUser,
   setCurrentUser,
   canSwitchSongs,
-  setCanSwitchSongs
+  setCanSwitchSongs,
 }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const canvas = useRef(null);
@@ -165,7 +181,6 @@ const StagingArea = ({
   const [audioSrc, setAudioSrc] = useState("");
   const audioRef = useRef(null);
 
-  
   /*
   useEffect(() => {
     if(play) {
@@ -173,7 +188,6 @@ const StagingArea = ({
     }
   }, [play]);
   */
-
 
   useEffect(() => {
     console.log("Prompt is '" + enteredDesc + "'");
@@ -197,7 +211,7 @@ const StagingArea = ({
       canvas.current.height = 300;
       // ctx.fillStyle = 'rgb(100,0,0)';
       // ctx.fillRect(0, 0, 100, 100);
-      let audioSource; 
+      let audioSource;
       let analyser;
       let audio1 = new Audio("data:audio/x-wav;base64," + data.output);
 
@@ -267,10 +281,16 @@ const StagingArea = ({
 
       let barWidth =
         (canvas.current.width - canvas.current.width / 12) / bufferLength;
-      let barHeight; 
+      let barHeight;
       let x;
 
-      let drawVisualizer = (bufferLength, x, barWidth, barHeight, dataArray) => {
+      let drawVisualizer = (
+        bufferLength,
+        x,
+        barWidth,
+        barHeight,
+        dataArray
+      ) => {
         const maxBarHeight = Math.max(...dataArray);
 
         // To increase variance, we could amplify the difference between the high and low values.
@@ -597,7 +617,13 @@ const StagingArea = ({
         {messageVisible && <OpeningMessage />}
         {renderingVisible && <RenderingMessage />}
         {outputVisible && (
-          <Output canvas={canvas} audioSrc={audioSrc} audioRef={audioRef} play={play} setPlay={setPlay}/>
+          <Output
+            canvas={canvas}
+            audioSrc={audioSrc}
+            audioRef={audioRef}
+            play={play}
+            setPlay={setPlay}
+          />
         )}
 
         <AutosizeTextarea
@@ -638,7 +664,7 @@ const AutosizeTextarea = ({
   currentUser,
   setCurrentUser,
   canSwitchSongs,
-  setCanSwitchSongs
+  setCanSwitchSongs,
 }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
@@ -684,7 +710,7 @@ const AutosizeTextarea = ({
       e.preventDefault();
       const textarea = ref.current;
       const temp = textarea.value;
-      if(temp != "") {
+      if (temp != "") {
         setCanSwitchSongs(false);
         updateDescription(temp);
         setEnteredDesc(textarea.value);
@@ -698,7 +724,7 @@ const AutosizeTextarea = ({
   const handleEnterButton = () => {
     const textarea = ref.current;
     const temp = textarea.value;
-    if(temp != "") {
+    if (temp != "") {
       setCanSwitchSongs(false);
       updateDescription(temp);
       setEnteredDesc(textarea.value);
