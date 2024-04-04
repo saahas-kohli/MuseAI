@@ -27,6 +27,9 @@ function App() {
   const [listRender, setListRender] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState("todo");
+  const [playing, setPlaying] = useState(false);
+  const [messageVisible, setMessageVisibility] = useState(true);
+  const [outputVisible, setOutputVisibility] = useState(false);
 
   return (
     <ChakraProvider theme={theme}>
@@ -78,6 +81,12 @@ function App() {
                         setLoggedIn={setLoggedIn}
                         canSwitchSongs={canSwitchSongs}
                         setCanSwitchSongs={setCanSwitchSongs}
+                        playing={playing}
+                        setPlaying={setPlaying}
+                        messageVisible={messageVisible}
+                        setMessageVisibility={setMessageVisibility}
+                        outputVisible={outputVisible}
+                        setOutputVisibility={setOutputVisibility}
                       ></Sidebar>
                     </Box>
                   </Box>
@@ -90,6 +99,12 @@ function App() {
                       setCurrentUser={setCurrentUser}
                       canSwitchSongs={canSwitchSongs}
                       setCanSwitchSongs={setCanSwitchSongs}
+                      playing={playing}
+                      setPlaying={setPlaying}
+                      messageVisible={messageVisible}
+                      setMessageVisibility={setMessageVisibility}
+                      outputVisible={outputVisible}
+                      setOutputVisibility={setOutputVisibility}
                     />
                   </Box>
                 </Flex>

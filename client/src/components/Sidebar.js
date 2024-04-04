@@ -44,7 +44,13 @@ const Sidebar = ({
   loggedIn,
   setLoggedIn,
   canSwitchSongs,
-  setCanSwitchSongs
+  setCanSwitchSongs,
+  playing,
+  setPlaying,
+  messageVisible,
+  setMessageVisibility,
+  outputVisible, 
+  setOutputVisibility
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
   const navigate = useNavigate();
@@ -136,6 +142,12 @@ const Sidebar = ({
               setCurrentUser={setCurrentUser}
               canSwitchSongs={canSwitchSongs}
               setCanSwitchSongs={setCanSwitchSongs}
+              playing={playing}
+              setPlaying={setPlaying}
+              messageVisible={messageVisible}
+              setMessageVisibility={setMessageVisibility}
+              outputVisible={outputVisible}
+              setOutputVisibility={setOutputVisibility}
             ></ListSongs>
           </Box>
         </Box>

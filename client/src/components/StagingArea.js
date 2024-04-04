@@ -107,8 +107,7 @@ const RenderingMessage = () => {
 let data = "Default value";
 let ws = new WebSocket("ws://localhost:6789");
 
-const Output = ({ canvas, audioSrc, audioRef }) => {
-  const [playing, setPlaying] = useState(false);
+const Output = ({ canvas, audioSrc, audioRef, playing, setPlaying }) => {
 
   return (
     <>
@@ -140,6 +139,9 @@ const Output = ({ canvas, audioSrc, audioRef }) => {
             <Button
               onClick={() => {
                 const audioPlayer = document.getElementById("player");
+                audioPlayer.onended = function() {
+                  setPlaying(false);
+                };
                 if (playing) {
                   audioPlayer.pause();
                 } else {
@@ -169,13 +171,17 @@ const StagingArea = ({
   setCurrentUser,
   canSwitchSongs,
   setCanSwitchSongs,
+  playing,
+  setPlaying,
+  messageVisible, 
+  setMessageVisibility,
+  outputVisible, 
+  setOutputVisibility
 }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const canvas = useRef(null);
   // Control components flashing on and off the screen to make transitions look better
-  const [messageVisible, setMessageVisibility] = useState(true);
   const [renderingVisible, setRenderingVisibility] = useState(false);
-  const [outputVisible, setOutputVisibility] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
   const [play, setPlay] = useState(false);
   const [audioSrc, setAudioSrc] = useState("");
@@ -284,6 +290,92 @@ const StagingArea = ({
       let barHeight;
       let x;
 
+      // let drawVisualizer = (
+      //   bufferLength,
+      //   x,
+      //   barWidth,
+      //   barHeight,
+      //   dataArray
+      // ) => {
+      //   const maxBarHeight = Math.max(...dataArray);
+
+      //   // To increase variance, we could amplify the difference between the high and low values.
+      //   // We calculate the exponent based on the maximum value to maintain the dynamic range.
+      //   const exponent = maxBarHeight > 0 ? Math.log10(maxBarHeight) / 2 : 1;
+
+      //   for (let i = 0; i < bufferLength; i++) {
+      //     // Apply an exponential transformation to the dataArray values
+      //     const value = dataArray[i] > 0 ? Math.pow(dataArray[i], exponent) : 0;
+      //     const normalizedHeight = value / Math.pow(maxBarHeight, exponent);
+
+      //     // Make sure the bar height is at least a random small value to be visible
+      //     let barHeight =
+      //       normalizedHeight *
+      //       (canvas.current.height - canvas.current.height / 15);
+      //     if (barHeight <= 1) {
+      //       barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
+      //     }
+
+      //     // Create the gradient for this bar
+      //     let gradientStartY = canvas.current.height - barHeight;
+      //     const gradientEndY = canvas.current.height;
+
+      //     // Ensure that the start and end Y positions are finite numbers
+      //     if (
+      //       !Number.isFinite(gradientStartY) ||
+      //       !Number.isFinite(gradientEndY)
+      //     ) {
+      //       continue; // Skip this iteration
+      //     }
+
+      //     const vertical = dataArray[i] * 3;
+      //     const red = (i * vertical) / 20;
+      //     const green = i * 4;
+      //     const blue = vertical / 2;
+      //     ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
+
+      //     // KEEP THIS
+      //     // ctx.fillRect(x, gradientStartY, barWidth, barHeight);
+
+      //     // Start drawing the bar with rounded top
+      //     ctx.beginPath();
+
+      //     // Move to the bottom left corner of the bar
+      //     ctx.moveTo(x, gradientEndY);
+
+      //     // Draw the left side of the bar
+      //     ctx.lineTo(x, gradientStartY + barWidth / 2); // Adjust for the radius of the top corner
+
+      //     // Draw the rounded top
+      //     ctx.arcTo(
+      //       x,
+      //       gradientStartY,
+      //       x + barWidth / 2,
+      //       gradientStartY,
+      //       barWidth / 2
+      //     ); // Top left corner
+      //     ctx.arcTo(
+      //       x + barWidth,
+      //       gradientStartY,
+      //       x + barWidth,
+      //       gradientStartY + barWidth / 2,
+      //       barWidth / 2
+      //     ); // Top right corner
+
+      //     // Draw the right side of the bar
+      //     ctx.lineTo(x + barWidth, gradientEndY);
+
+      //     // Close the path and fill the bar
+      //     ctx.closePath();
+      //     ctx.fill();
+
+      //     // Move to the next bar's x position
+      //     x += barWidth + 0.25;
+      //   }
+      // };
+
+      // Simple moving average smoothing function
+
       let drawVisualizer = (
         bufferLength,
         x,
@@ -292,81 +384,54 @@ const StagingArea = ({
         dataArray
       ) => {
         const maxBarHeight = Math.max(...dataArray);
-
-        // To increase variance, we could amplify the difference between the high and low values.
-        // We calculate the exponent based on the maximum value to maintain the dynamic range.
         const exponent = maxBarHeight > 0 ? Math.log10(maxBarHeight) / 2 : 1;
-
-        for (let i = 0; i < bufferLength; i++) {
-          // Apply an exponential transformation to the dataArray values
+        const canvasMidpoint = canvas.current.width / 2; // Calculate the midpoint of the canvas width
+      
+        for (let i = 0; i < bufferLength / 2; i++) { // Adjust loop to draw half as many bars
           const value = dataArray[i] > 0 ? Math.pow(dataArray[i], exponent) : 0;
           const normalizedHeight = value / Math.pow(maxBarHeight, exponent);
-
-          // Make sure the bar height is at least a random small value to be visible
-          let barHeight =
-            normalizedHeight *
-            (canvas.current.height - canvas.current.height / 15);
+      
+          let barHeight = normalizedHeight * (canvas.current.height - canvas.current.height / 15);
           if (barHeight <= 1) {
             barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
           }
-
-          // Create the gradient for this bar
-          let gradientStartY = canvas.current.height - barHeight;
+      
+          const gradientStartY = canvas.current.height - barHeight;
           const gradientEndY = canvas.current.height;
-
-          // Ensure that the start and end Y positions are finite numbers
-          if (
-            !Number.isFinite(gradientStartY) ||
-            !Number.isFinite(gradientEndY)
-          ) {
-            continue; // Skip this iteration
+      
+          if (!Number.isFinite(gradientStartY) || !Number.isFinite(gradientEndY)) {
+            continue; // Skip this iteration if the positions aren't finite numbers
           }
-
+      
           const vertical = dataArray[i] * 3;
           const red = (i * vertical) / 20;
           const green = i * 4;
           const blue = vertical / 2;
           ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
-
-          // KEEP THIS
-          // ctx.fillRect(x, gradientStartY, barWidth, barHeight);
-
-          // Start drawing the bar with rounded top
-          ctx.beginPath();
-
-          // Move to the bottom left corner of the bar
-          ctx.moveTo(x, gradientEndY);
-
-          // Draw the left side of the bar
-          ctx.lineTo(x, gradientStartY + barWidth / 2); // Adjust for the radius of the top corner
-
-          // Draw the rounded top
-          ctx.arcTo(
-            x,
-            gradientStartY,
-            x + barWidth / 2,
-            gradientStartY,
-            barWidth / 2
-          ); // Top left corner
-          ctx.arcTo(
-            x + barWidth,
-            gradientStartY,
-            x + barWidth,
-            gradientStartY + barWidth / 2,
-            barWidth / 2
-          ); // Top right corner
-
-          // Draw the right side of the bar
-          ctx.lineTo(x + barWidth, gradientEndY);
-
-          // Close the path and fill the bar
-          ctx.closePath();
-          ctx.fill();
-
-          // Move to the next bar's x position
-          x += barWidth + 0.25;
+      
+          // Calculate positions for symmetric bars
+          const xPosLeft = canvasMidpoint - (i * (barWidth + 0.25) + barWidth); // Position for the left bar
+          const xPosRight = canvasMidpoint + i * (barWidth + 0.25); // Position for the right bar
+      
+          // Draw left bar
+          drawBar(xPosLeft, gradientStartY, barWidth, barHeight);
+      
+          // Draw right bar
+          drawBar(xPosRight, gradientStartY, barWidth, barHeight);
         }
       };
+      
+      function drawBar(x, gradientStartY, barWidth, barHeight) {
+        // Similar drawing logic as before, but using the parameters for x, gradientStartY, barWidth, and barHeight
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.current.height);
+        ctx.lineTo(x, gradientStartY + barWidth / 2);
+        ctx.arcTo(x, gradientStartY, x + barWidth / 2, gradientStartY, barWidth / 2);
+        ctx.arcTo(x + barWidth, gradientStartY, x + barWidth, gradientStartY + barWidth / 2, barWidth / 2);
+        ctx.lineTo(x + barWidth, canvas.current.height);
+        ctx.closePath();
+        ctx.fill();
+      }      
 
       let animate = () => {
         // console.log("Animate was run");
@@ -464,6 +529,7 @@ const StagingArea = ({
       if (audioRetrieved) {
         console.log("Preparing canvas");
         //setRenderingVisibility(false);
+        setMessageVisibility(false);
         setOutputVisibility(true);
         prepareCanvas();
       }
@@ -623,6 +689,8 @@ const StagingArea = ({
             audioRef={audioRef}
             play={play}
             setPlay={setPlay}
+            playing={playing}
+            setPlaying={setPlaying}
           />
         )}
 
@@ -637,6 +705,8 @@ const StagingArea = ({
           setCurrentUser={setCurrentUser}
           canSwitchSongs={canSwitchSongs}
           setCanSwitchSongs={setCanSwitchSongs}
+          playing={playing}
+          setPlaying={setPlaying}
         />
       </Box>
       <Box
@@ -665,6 +735,8 @@ const AutosizeTextarea = ({
   setCurrentUser,
   canSwitchSongs,
   setCanSwitchSongs,
+  playing,
+  setPlaying
 }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
@@ -710,7 +782,7 @@ const AutosizeTextarea = ({
       e.preventDefault();
       const textarea = ref.current;
       const temp = textarea.value;
-      if (temp != "") {
+      if (temp != "" && canSwitchSongs && !playing && selectedSong !== -1) {
         setCanSwitchSongs(false);
         updateDescription(temp);
         setEnteredDesc(textarea.value);
@@ -724,7 +796,7 @@ const AutosizeTextarea = ({
   const handleEnterButton = () => {
     const textarea = ref.current;
     const temp = textarea.value;
-    if (temp != "") {
+    if (temp != "" && canSwitchSongs && !playing && selectedSong !== -1) {
       setCanSwitchSongs(false);
       updateDescription(temp);
       setEnteredDesc(textarea.value);

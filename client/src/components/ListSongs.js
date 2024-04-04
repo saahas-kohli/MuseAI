@@ -12,7 +12,13 @@ function ListSongs({
   currentUser,
   setCurrentUser,
   canSwitchSongs,
-  setCanSwitchSongs
+  setCanSwitchSongs,
+  playing,
+  setPlaying,
+  messageVisible,
+  setMessageVisibility,
+  outputVisible, 
+  setOutputVisibility
 }) {
   const [todos, setTodos] = useState([]);
 
@@ -65,6 +71,12 @@ function ListSongs({
               setCurrentUser={setCurrentUser}
               canSwitchSongs={canSwitchSongs}
               setCanSwitchSongs={setCanSwitchSongs}
+              playing={playing}
+              setPlaying={setPlaying}
+              messageVisible={messageVisible}
+              setMessageVisibility={setMessageVisibility}
+              outputVisible={outputVisible}
+              setOutputVisibility={setOutputVisibility}
             />
           </ListItem>
         ))}

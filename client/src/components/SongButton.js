@@ -45,7 +45,11 @@ const SongButton = ({
   currentUser,
   setCurrentUser,
   canSwitchSongs,
-  setCanSwitchSongs
+  setCanSwitchSongs,
+  playing,
+  setPlaying,
+  messageVisible,
+  setMessageVisibility
 }) => {
   const [description, setDescription] = useState(todo.description);
   const [beingEdited, setBeingEdited] = useState(false);
@@ -109,8 +113,9 @@ const SongButton = ({
       <Button
         onKeyUp={(e) => e.preventDefault()}
         onClick={() => {
-          if(canSwitchSongs) {
+          if(canSwitchSongs && !playing) {
             setSelectedSong(todo.todo_id);
+            setMessageVisibility(true);
           }
         }}
         width="92.25%"
@@ -237,6 +242,7 @@ const SongButton = ({
                 </PopoverTrigger>
 
                 <MenuList width="102%" marginTop="-5px" marginLeft="-5.35%">
+                  {/*
                   <MenuItem
                     borderColor="#005FCD"
                     marginTop="-3px"
@@ -261,10 +267,10 @@ const SongButton = ({
                     }}
                   >
                     Pin
-                  </MenuItem>
+                  </MenuItem>*/}
                   <MenuItem
                     borderColor="#005FCD"
-                    marginTop="5px"
+                    marginTop="-3px"
                     w="95%"
                     marginLeft="5.5px"
                     borderRadius="4px"
@@ -297,7 +303,7 @@ const SongButton = ({
                   </MenuItem>
                   <MenuItem
                     borderColor="#005FCD"
-                    marginTop="5px"
+                    marginTop="2px"
                     w="95%"
                     marginLeft="5.5px"
                     borderRadius="4px"
@@ -310,6 +316,10 @@ const SongButton = ({
                     _focus={{ outline: "none" }}
                     onClick={(e) => {
                       deleteFromList(todo.todo_id);
+                      if(selectedSong === todo.todo_id) {
+                        setSelectedSong(-1);
+                        setMessageVisibility(true);
+                      }
                       e.stopPropagation();
                     }}
                     color="#EF4444"
