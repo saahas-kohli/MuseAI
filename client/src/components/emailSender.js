@@ -33,3 +33,5 @@ async function sendEmail(userEmail)
       }
     });    
 }
+
+console.log("Running singular file is working!");

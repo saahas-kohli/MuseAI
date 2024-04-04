@@ -37,6 +37,9 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 
+let data = "Default value";
+let ws = new WebSocket("ws://localhost:6789"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
+
 const OpeningMessage = () => {
   // This component handles the opening message
   return (
@@ -103,9 +106,6 @@ const RenderingMessage = () => {
     </>
   );
 };
-
-let data = "Default value";
-let ws = new WebSocket("ws://localhost:6789");
 
 const Output = ({ canvas, audioSrc, audioRef, playing, setPlaying }) => {
 
