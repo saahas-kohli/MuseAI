@@ -30,7 +30,7 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
         `http://localhost:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
-      if (jsonData.emailExists && jsonData.userExists) {
+      if (jsonData.emailExists && jsonData.userExists && jsonData.emailVerified) {
         return true;
       }
       return false;
@@ -40,8 +40,8 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   };
 
   const authenticateUser = async (email, password) => {
-    const userExists = await getUser(email, password);
-    if (userExists) {
+    const userExistsAndVerified = await getUser(email, password);
+    if (userExistsAndVerified) {
       setCurrentUser(email.toLowerCase());
       setLoggedIn(true);
       setTimeout(() => {

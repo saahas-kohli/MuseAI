@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const sendEmail = require("./emailSender");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: "10mb" }));
 
@@ -71,6 +72,19 @@ app.post("/todos/:email/:password", async (req, res) => {
   }
 });
 
+//send verification email
+
+app.post("/send-verify/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const lowercaseEmail = email.toLowerCase();
+    await sendEmail(lowercaseEmail);
+    res.json("Verification email sent!");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 //get all todos for a user
 
 app.get("/todos/:user", async (req, res) => {
@@ -112,7 +126,7 @@ app.get("/audio/:user/:id", async (req, res) => {
         `SELECT audio FROM "${user}" WHERE todo_id = $1;`,
         [id]
       );
-      if (data.rows.length === 0)
+      if (data.rowCount === 0)
         res.json({ exists: false, audioData: "invalid id" });
       else res.json({ exists: true, audioData: data.rows[0].audio });
     }
@@ -131,18 +145,53 @@ app.get("/users/:email/:password", async (req, res) => {
       `SELECT email, password FROM authentication WHERE email = $1;`,
       [lowercaseEmail]
     );
+    let wasEmailVerified = false;
     if (selectedEmail.rowCount > 0) {
       const selectedUser = await pool.query(
         `SELECT email, password FROM authentication WHERE email = $1 AND password = $2;`,
         [lowercaseEmail, password]
       );
+      const verifyEmailResult = await pool.query(
+        `SELECT is_verified FROM email_verification WHERE email = $1;`,
+        [lowercaseEmail]
+      );
+      if (verifyEmailResult.rowCount > 0) {
+        // If a row was found, update wasEmailVerified with the value of is_verified from the database
+        wasEmailVerified = verifyEmailResult.rows[0].is_verified;
+        console.log(verifyEmailResult.rows[0].is_verified);
+      }
       if (selectedUser.rowCount > 0) {
-        res.json({ emailExists: true, userExists: true });
+        res.json({ emailExists: true, emailVerified: wasEmailVerified, userExists: true });
       } else {
-        res.json({ emailExists: true, userExists: false });
+        res.json({ emailExists: true, emailVerified: wasEmailVerified, userExists: false });
       }
     } else {
-      res.json({ emailExists: false, userExists: false });
+      res.json({ emailExists: false, emailVerified: wasEmailVerified, userExists: false });
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+// Verify a user's email address.
+
+app.get('/verify-email', async (req, res) => {
+  try {
+    const token = req.query.token;
+    if (token) {
+        
+      const verificationResult = await pool.query(
+        `UPDATE email_verification SET is_verified = TRUE WHERE token = $1 RETURNING *;`,
+        [token]
+      );
+      if(verificationResult.rows.length > 0) {
+        res.json({was_verified: true});
+      }
+      else {
+        res.json({was_verified: false});
+      }
+    } else {
+        res.status(400).send('Invalid request');
     }
   } catch (err) {
     console.error(err.message);

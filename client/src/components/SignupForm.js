@@ -22,6 +22,7 @@ import PasswordField from "./PasswordField.js";
 import ConfirmPasswordField from "./ConfirmPasswordField.js";
 
 const validator = require("validator");
+//const sendEmail = require('./emailSender');
 
 const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const [emailText, setEmailText] = useState("");
@@ -70,6 +71,19 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
       const result = await emailExists(email, password);
       setEmailInvalid(result);
       setDupEmailExists(result);
+    }
+  };
+
+  const sendVerificationEmail = async(email) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/send-verify/${email}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
     }
   };
 
@@ -179,6 +193,8 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                       !emailInvalid
                     ) {
                       createUser(emailText, passwordText);
+                      sendVerificationEmail(emailText);
+                      //sendEmail(emailText.toLowerCase());
                       //setCurrentUser(emailText);
                       setTimeout(() => {
                         navigate("/login");

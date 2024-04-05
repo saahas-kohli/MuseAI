@@ -14,6 +14,7 @@ import LoginForm from "./components/LoginForm.js";
 import SignupForm from "./components/SignupForm.js";
 import Sidebar from "./components/Sidebar.js";
 import StagingArea from "./components/StagingArea.js";
+import VerificationLandingPage from "./components/VerificationLandingPage.js";
 
 const theme = extendTheme({
   components: {
@@ -113,6 +114,7 @@ function App() {
               )
             }
           />
+          <Route path="/verify-email" element={<VerificationLandingPage></VerificationLandingPage>}/>
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
