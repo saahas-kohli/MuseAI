@@ -22,6 +22,8 @@ const theme = extendTheme({
   },
 });
 
+// Note: Accounting for window resizing is easier with percentage values for width and height CSS!
+
 function App() {
   const [selectedSong, setSelectedSong] = useState(-1);
   const [canSwitchSongs, setCanSwitchSongs] = useState(true);
@@ -63,13 +65,8 @@ function App() {
             path="/home"
             element={
               loggedIn ? (
-                <Flex>
-                  <Box
-                    className="sidebar"
-                    bg="#F9F8F8"
-                    w={0.172}
-                    h="calc(100vh)"
-                  >
+                <Flex h="780px">
+                  <Box className="sidebar" bg="#F9F8F8" w="260px">
                     <Box marginRight="4px">
                       <Sidebar
                         selectedSong={selectedSong}
@@ -91,7 +88,7 @@ function App() {
                       ></Sidebar>
                     </Box>
                   </Box>
-                  <Box w={0.828} bg="" h="calc(100vh)">
+                  <Box flex="1" bg="">
                     <StagingArea
                       selectedSong={selectedSong}
                       listRender={listRender}
@@ -114,7 +111,10 @@ function App() {
               )
             }
           />
-          <Route path="/verify-email" element={<VerificationLandingPage></VerificationLandingPage>}/>
+          <Route
+            path="/verify-email"
+            element={<VerificationLandingPage></VerificationLandingPage>}
+          />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>

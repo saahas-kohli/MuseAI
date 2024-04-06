@@ -49,7 +49,7 @@ const SongButton = ({
   playing,
   setPlaying,
   messageVisible,
-  setMessageVisibility
+  setMessageVisibility,
 }) => {
   const [description, setDescription] = useState(todo.description);
   const [beingEdited, setBeingEdited] = useState(false);
@@ -113,7 +113,7 @@ const SongButton = ({
       <Button
         onKeyUp={(e) => e.preventDefault()}
         onClick={() => {
-          if(canSwitchSongs && !playing) {
+          if (canSwitchSongs && !playing) {
             setSelectedSong(todo.todo_id);
             setMessageVisibility(true);
           }
@@ -315,12 +315,17 @@ const SongButton = ({
                     }}
                     _focus={{ outline: "none" }}
                     onClick={(e) => {
-                      deleteFromList(todo.todo_id);
-                      if(selectedSong === todo.todo_id) {
-                        setSelectedSong(-1);
-                        setMessageVisibility(true);
+                      if (
+                        selectedSong !== todo.todo_id ||
+                        (canSwitchSongs && !playing)
+                      ) {
+                        deleteFromList(todo.todo_id);
+                        if (selectedSong === todo.todo_id) {
+                          setSelectedSong(-1);
+                          setMessageVisibility(true);
+                        }
+                        e.stopPropagation();
                       }
-                      e.stopPropagation();
                     }}
                     color="#EF4444"
                     icon={

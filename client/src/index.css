@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+html,
+body {
+  height: 100%; /* Ensures the body takes the full height of the viewport */
+  margin: 0; /* Reset default margins */
+  padding: 0; /* Reset default paddings */
+  overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+
+body {
+  min-height: 100vh; /* Ensures minimum height is full viewport height */
+  /* Allows body content to grow larger than the viewport and enables vertical scrolling */
+  overflow-y: hidden;
+}

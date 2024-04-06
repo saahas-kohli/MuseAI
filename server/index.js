@@ -158,15 +158,27 @@ app.get("/users/:email/:password", async (req, res) => {
       if (verifyEmailResult.rowCount > 0) {
         // If a row was found, update wasEmailVerified with the value of is_verified from the database
         wasEmailVerified = verifyEmailResult.rows[0].is_verified;
-        console.log(verifyEmailResult.rows[0].is_verified);
+        //console.log(verifyEmailResult.rows[0].is_verified);
       }
       if (selectedUser.rowCount > 0) {
-        res.json({ emailExists: true, emailVerified: wasEmailVerified, userExists: true });
+        res.json({
+          emailExists: true,
+          emailVerified: wasEmailVerified,
+          userExists: true,
+        });
       } else {
-        res.json({ emailExists: true, emailVerified: wasEmailVerified, userExists: false });
+        res.json({
+          emailExists: true,
+          emailVerified: wasEmailVerified,
+          userExists: false,
+        });
       }
     } else {
-      res.json({ emailExists: false, emailVerified: wasEmailVerified, userExists: false });
+      res.json({
+        emailExists: false,
+        emailVerified: wasEmailVerified,
+        userExists: false,
+      });
     }
   } catch (err) {
     console.error(err.message);
@@ -175,23 +187,17 @@ app.get("/users/:email/:password", async (req, res) => {
 
 // Verify a user's email address.
 
-app.get('/verify-email', async (req, res) => {
+app.get("/verify-email", async (req, res) => {
   try {
     const token = req.query.token;
-    if (token) {
-        
-      const verificationResult = await pool.query(
-        `UPDATE email_verification SET is_verified = TRUE WHERE token = $1 RETURNING *;`,
-        [token]
-      );
-      if(verificationResult.rows.length > 0) {
-        res.json({was_verified: true});
-      }
-      else {
-        res.json({was_verified: false});
-      }
+    const verificationResult = await pool.query(
+      `UPDATE email_verification SET is_verified = TRUE WHERE token = $1 RETURNING *;`,
+      [token]
+    );
+    if (verificationResult.rows.length > 0) {
+      res.json({ was_verified: true });
     } else {
-        res.status(400).send('Invalid request');
+      res.json({ was_verified: false });
     }
   } catch (err) {
     console.error(err.message);

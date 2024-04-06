@@ -14,6 +14,7 @@ import {
   Text,
   Image,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const [passwordText, setPasswordText] = useState("");
   const [confirmText, setConfirmText] = useState("");
   const navigate = useNavigate();
+  const toast = useToast();
 
   const createUser = async (email, password) => {
     try {
@@ -51,7 +53,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
         `http://localhost:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
-      if (jsonData.emailExists) {
+      if (jsonData.emailExists && jsonData.userExists) {
         return true;
       }
       return false;
@@ -74,10 +76,11 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
     }
   };
 
-  const sendVerificationEmail = async(email) => {
+  const sendVerificationEmail = async (email) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/send-verify/${email}`, {
+        `http://localhost:9000/send-verify/${email}`,
+        {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         }
@@ -88,7 +91,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   };
 
   return (
-    <Box bg="#FDFCFE">
+    <Box bg="#FDFCFE" h="calc(100vh)">
       <Container
         maxW="lg"
         py={{
@@ -199,6 +202,25 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                       setTimeout(() => {
                         navigate("/login");
                       }, 200);
+                      toast({
+                        title: "Account created.",
+                        description:
+                          "We've sent an email verification link to " +
+                          emailText.toLowerCase() +
+                          ".",
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    } else {
+                      toast({
+                        title: "Failed to create account.",
+                        description:
+                          "One or more of the above fields requires revision.",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                      });
                     }
                   }}
                 >

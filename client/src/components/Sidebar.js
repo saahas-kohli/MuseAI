@@ -49,8 +49,8 @@ const Sidebar = ({
   setPlaying,
   messageVisible,
   setMessageVisibility,
-  outputVisible, 
-  setOutputVisibility
+  outputVisible,
+  setOutputVisibility,
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
   const navigate = useNavigate();
@@ -152,7 +152,7 @@ const Sidebar = ({
           </Box>
         </Box>
       </Box>
-      <Box marginTop="8.75%" marginLeft="4.75%" width="100%">
+      <Box marginLeft="12px" width="256px" position="absolute" bottom="14px">
         <Menu placement="top-end">
           <MenuButton
             as={Button}
@@ -167,7 +167,7 @@ const Sidebar = ({
             _focusVisible={{ boxShadow: "none" }}
             justifyContent="flex-start"
           >
-            <Flex marginLeft="-8.5px">
+            <Flex marginLeft="-7.5px" maxHeight="30px">
               <Box>
                 {currentUser === "todo" ? (
                   <Avatar

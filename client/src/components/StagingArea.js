@@ -7,6 +7,7 @@ import autosize from "autosize";
 import React, { useRef, useState, useEffect } from "react";
 import { Link, Textarea } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
+import { BsArrowUpShort } from "react-icons/bs";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
 import { Spinner } from "@chakra-ui/react";
@@ -40,16 +41,25 @@ import {
 let data = "Default value";
 let ws = new WebSocket("ws://localhost:6789"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
 
+/*
+ws.onopen = function (e) {
+  console.log("Connection established.");
+
+  setInterval(() => {
+    ws.send(JSON.stringify({ prompt: "ping" }));
+  }, 10000);
+};
+*/
+
 const OpeningMessage = () => {
   // This component handles the opening message
   return (
     <>
       <Box
-        bottom="0"
+        marginBottom={35}
         width="80%" // Adjusted width for a larger box
         height="350px" // Specify a height to make the box larger
         marginLeft="7%" // Adjusted to keep the box centered with the new width
-        marginBottom={35}
         borderRadius="20px" // Added rounded edges
         overflow="hidden" // Ensure the canvas respects the Box's rounded corners
       >
@@ -57,7 +67,7 @@ const OpeningMessage = () => {
           pos="relative"
           left="0"
           marginTop="0px"
-          marginLeft="135px"
+          marginLeft="150px"
           fontWeight="semibold"
           fontSize="24px"
         >
@@ -108,7 +118,6 @@ const RenderingMessage = () => {
 };
 
 const Output = ({ canvas, audioSrc, audioRef, playing, setPlaying }) => {
-
   return (
     <>
       <Box
@@ -139,7 +148,7 @@ const Output = ({ canvas, audioSrc, audioRef, playing, setPlaying }) => {
             <Button
               onClick={() => {
                 const audioPlayer = document.getElementById("player");
-                audioPlayer.onended = function() {
+                audioPlayer.onended = function () {
                   setPlaying(false);
                 };
                 if (playing) {
@@ -173,10 +182,10 @@ const StagingArea = ({
   setCanSwitchSongs,
   playing,
   setPlaying,
-  messageVisible, 
+  messageVisible,
   setMessageVisibility,
-  outputVisible, 
-  setOutputVisibility
+  outputVisible,
+  setOutputVisibility,
 }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const canvas = useRef(null);
@@ -204,19 +213,9 @@ const StagingArea = ({
       console.log("Actually rendering canvas");
       let audioElement = audioRef.current;
       canvas.current.over = false;
-      // Perform canvas operations here
-      // DRAWING STARTS HERE
-      // console.log("DATA");
-      // console.log(data.output);
-      // console.log("DATA");
-      // Handle received message
       let ctx = canvas.current.getContext("2d");
-      // canvas.current.width = window.innerWidth;
-      // canvas.current.height = window.innerHeight;
       canvas.current.width = 404;
       canvas.current.height = 300;
-      // ctx.fillStyle = 'rgb(100,0,0)';
-      // ctx.fillRect(0, 0, 100, 100);
       let audioSource;
       let analyser;
       let audio1 = new Audio("data:audio/x-wav;base64," + data.output);
@@ -239,9 +238,25 @@ const StagingArea = ({
         animate();
       };
 
+      let handlePaused = () => {
+        canvas.current.over = true;
+        audio1.pause();
+      };
+
       let handleEnded = () => {
         canvas.current.over = true;
         audio1.pause();
+        // ADDING THIS
+        audio1 = new Audio("data:audio/x-wav;base64," + data.output);
+        setAudioSrc("data:audio/x-wav;base64," + data.output);
+        // let audioCtx = new AudioContext();
+        audioSource = audioCtx.createMediaElementSource(audio1);
+        analyser = audioCtx.createAnalyser();
+        audioSource.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 128;
+        analyser.getByteFrequencyData(dataArray);
+        // ADDING THIS
       };
 
       // Attach event listeners
@@ -249,25 +264,7 @@ const StagingArea = ({
       audioElement.addEventListener("playing", handleSeek);
       audioElement.addEventListener("seeked", handleSeek);
       audioElement.addEventListener("ended", handleEnded);
-      audioElement.addEventListener("pause", handleEnded);
-
-      // const playLog = () => {
-      //   console.log('play');
-      // };
-      // const playingLog = () => {
-      //   console.log('playing');
-      // };
-      // const seekedLog = () => {
-      //   console.log('seeked');
-      // };
-      // const endedLog = () => {
-      //   console.log('ended');
-      // };
-
-      // audioElement.addEventListener('play', playLog);
-      // audioElement.addEventListener('playing', playingLog);
-      // audioElement.addEventListener('seeked', seekedLog);
-      // audioElement.addEventListener('ended', endedLog);
+      audioElement.addEventListener("pause", handlePaused);
 
       // Start animation if audio is already playing (e.g., on component mount if audio was started elsewhere)
       if (!audioElement.paused) {
@@ -290,90 +287,6 @@ const StagingArea = ({
       let barHeight;
       let x;
 
-      // let drawVisualizer = (
-      //   bufferLength,
-      //   x,
-      //   barWidth,
-      //   barHeight,
-      //   dataArray
-      // ) => {
-      //   const maxBarHeight = Math.max(...dataArray);
-
-      //   // To increase variance, we could amplify the difference between the high and low values.
-      //   // We calculate the exponent based on the maximum value to maintain the dynamic range.
-      //   const exponent = maxBarHeight > 0 ? Math.log10(maxBarHeight) / 2 : 1;
-
-      //   for (let i = 0; i < bufferLength; i++) {
-      //     // Apply an exponential transformation to the dataArray values
-      //     const value = dataArray[i] > 0 ? Math.pow(dataArray[i], exponent) : 0;
-      //     const normalizedHeight = value / Math.pow(maxBarHeight, exponent);
-
-      //     // Make sure the bar height is at least a random small value to be visible
-      //     let barHeight =
-      //       normalizedHeight *
-      //       (canvas.current.height - canvas.current.height / 15);
-      //     if (barHeight <= 1) {
-      //       barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
-      //     }
-
-      //     // Create the gradient for this bar
-      //     let gradientStartY = canvas.current.height - barHeight;
-      //     const gradientEndY = canvas.current.height;
-
-      //     // Ensure that the start and end Y positions are finite numbers
-      //     if (
-      //       !Number.isFinite(gradientStartY) ||
-      //       !Number.isFinite(gradientEndY)
-      //     ) {
-      //       continue; // Skip this iteration
-      //     }
-
-      //     const vertical = dataArray[i] * 3;
-      //     const red = (i * vertical) / 20;
-      //     const green = i * 4;
-      //     const blue = vertical / 2;
-      //     ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
-
-      //     // KEEP THIS
-      //     // ctx.fillRect(x, gradientStartY, barWidth, barHeight);
-
-      //     // Start drawing the bar with rounded top
-      //     ctx.beginPath();
-
-      //     // Move to the bottom left corner of the bar
-      //     ctx.moveTo(x, gradientEndY);
-
-      //     // Draw the left side of the bar
-      //     ctx.lineTo(x, gradientStartY + barWidth / 2); // Adjust for the radius of the top corner
-
-      //     // Draw the rounded top
-      //     ctx.arcTo(
-      //       x,
-      //       gradientStartY,
-      //       x + barWidth / 2,
-      //       gradientStartY,
-      //       barWidth / 2
-      //     ); // Top left corner
-      //     ctx.arcTo(
-      //       x + barWidth,
-      //       gradientStartY,
-      //       x + barWidth,
-      //       gradientStartY + barWidth / 2,
-      //       barWidth / 2
-      //     ); // Top right corner
-
-      //     // Draw the right side of the bar
-      //     ctx.lineTo(x + barWidth, gradientEndY);
-
-      //     // Close the path and fill the bar
-      //     ctx.closePath();
-      //     ctx.fill();
-
-      //     // Move to the next bar's x position
-      //     x += barWidth + 0.25;
-      //   }
-      // };
-
       // Simple moving average smoothing function
 
       let drawVisualizer = (
@@ -386,52 +299,70 @@ const StagingArea = ({
         const maxBarHeight = Math.max(...dataArray);
         const exponent = maxBarHeight > 0 ? Math.log10(maxBarHeight) / 2 : 1;
         const canvasMidpoint = canvas.current.width / 2; // Calculate the midpoint of the canvas width
-      
-        for (let i = 0; i < bufferLength / 2; i++) { // Adjust loop to draw half as many bars
+
+        for (let i = 0; i < bufferLength / 2; i++) {
+          // Adjust loop to draw half as many bars
           const value = dataArray[i] > 0 ? Math.pow(dataArray[i], exponent) : 0;
           const normalizedHeight = value / Math.pow(maxBarHeight, exponent);
-      
-          let barHeight = normalizedHeight * (canvas.current.height - canvas.current.height / 15);
+
+          let barHeight =
+            normalizedHeight *
+            (canvas.current.height - canvas.current.height / 15);
           if (barHeight <= 1) {
             barHeight = Math.random() * 5 + 2; // Slightly higher than 0 to be visible
           }
-      
+
           const gradientStartY = canvas.current.height - barHeight;
           const gradientEndY = canvas.current.height;
-      
-          if (!Number.isFinite(gradientStartY) || !Number.isFinite(gradientEndY)) {
+
+          if (
+            !Number.isFinite(gradientStartY) ||
+            !Number.isFinite(gradientEndY)
+          ) {
             continue; // Skip this iteration if the positions aren't finite numbers
           }
-      
+
           const vertical = dataArray[i] * 3;
           const red = (i * vertical) / 20;
           const green = i * 4;
           const blue = vertical / 2;
           ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
-      
+
           // Calculate positions for symmetric bars
           const xPosLeft = canvasMidpoint - (i * (barWidth + 0.25) + barWidth); // Position for the left bar
           const xPosRight = canvasMidpoint + i * (barWidth + 0.25); // Position for the right bar
-      
+
           // Draw left bar
           drawBar(xPosLeft, gradientStartY, barWidth, barHeight);
-      
+
           // Draw right bar
           drawBar(xPosRight, gradientStartY, barWidth, barHeight);
         }
       };
-      
+
       function drawBar(x, gradientStartY, barWidth, barHeight) {
         // Similar drawing logic as before, but using the parameters for x, gradientStartY, barWidth, and barHeight
         ctx.beginPath();
         ctx.moveTo(x, canvas.current.height);
         ctx.lineTo(x, gradientStartY + barWidth / 2);
-        ctx.arcTo(x, gradientStartY, x + barWidth / 2, gradientStartY, barWidth / 2);
-        ctx.arcTo(x + barWidth, gradientStartY, x + barWidth, gradientStartY + barWidth / 2, barWidth / 2);
+        ctx.arcTo(
+          x,
+          gradientStartY,
+          x + barWidth / 2,
+          gradientStartY,
+          barWidth / 2
+        );
+        ctx.arcTo(
+          x + barWidth,
+          gradientStartY,
+          x + barWidth,
+          gradientStartY + barWidth / 2,
+          barWidth / 2
+        );
         ctx.lineTo(x + barWidth, canvas.current.height);
         ctx.closePath();
         ctx.fill();
-      }      
+      }
 
       let animate = () => {
         // console.log("Animate was run");
@@ -449,7 +380,10 @@ const StagingArea = ({
       // Cleanup function
       return () => {
         audioElement.removeEventListener("play", handlePlay);
-        audioElement.removeEventListener("ended", handleEnded);
+        audioElement.removeEventListener("playing", handleSeek);
+        // audioElement.removeEventListener("seeked", handleSeek);
+        // audioElement.removeEventListener("ended", handleEnded);
+        // audioElement.removeEventListener("pause", handlePaused);
       };
 
       // DRAWING ENDS HERE
@@ -507,15 +441,14 @@ const StagingArea = ({
       //console.log(selectedSong);
       setRenderingVisibility(false);
       setOutputVisibility(true);
-
       // Data.output changes here
       data = JSON.parse(event.data);
 
+      updateAudio();
+      prepareCanvas();
+
       // console.log("This is the music data log!");
       // console.log(data.output.slice(0, 20));
-      updateAudio();
-
-      prepareCanvas();
     };
   }, [currentUser, selectedSong]);
 
@@ -568,6 +501,7 @@ const StagingArea = ({
       const thisData = { prompt: musicDescription };
       ws.send(JSON.stringify(thisData));
     } else {
+      //ws = new WebSocket("ws://localhost:6789");
       console.error("WebSocket is not connected.");
     }
   };
@@ -715,7 +649,7 @@ const StagingArea = ({
         fontSize="11.5px"
         pos="absolute"
         bottom="8px"
-        marginLeft="30.25%"
+        marginLeft="31.1%"
         letterSpacing="-0.03em"
       >
         MuseAI may take up to a minute to compose responses.
@@ -736,7 +670,7 @@ const AutosizeTextarea = ({
   canSwitchSongs,
   setCanSwitchSongs,
   playing,
-  setPlaying
+  setPlaying,
 }) => {
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
@@ -833,6 +767,7 @@ const AutosizeTextarea = ({
         letterSpacing="-0.01em"
         paddingTop="17px"
         paddingBottom="17px"
+        paddingRight="48px"
         fontSize="16px"
         overflow="hidden"
         sx={{
@@ -856,15 +791,18 @@ const AutosizeTextarea = ({
       >
         <PopoverTrigger>
           <IconButton
-            marginLeft="10px"
+            zIndex={1}
+            position="absolute"
+            right="12px"
             backgroundColor={buttonDarkened ? "black" : "#E5E4E4"}
             textColor="white"
-            size="md"
-            isRound
+            height="30px"
+            minWidth="30px"
+            borderRadius="8px"
             onClick={() => handleEnterButton()}
             _hover={{}}
-            icon={<ArrowUpIcon />}
-            fontSize="25px"
+            icon={<BsArrowUpShort strokeWidth="0.25px" />}
+            fontSize="27px"
             aria-label="Upload text"
             _active={{}}
           ></IconButton>

@@ -30,7 +30,11 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
         `http://localhost:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
-      if (jsonData.emailExists && jsonData.userExists && jsonData.emailVerified) {
+      if (
+        jsonData.emailExists &&
+        jsonData.userExists &&
+        jsonData.emailVerified
+      ) {
         return true;
       }
       return false;
@@ -51,7 +55,7 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   };
 
   return (
-    <Box bg="#FDFCFE">
+    <Box bg="#FDFCFE" h="calc(100vh)">
       <Container
         maxW="lg"
         py={{
