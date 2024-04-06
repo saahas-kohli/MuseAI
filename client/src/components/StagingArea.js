@@ -25,6 +25,7 @@ import {
   PopoverCloseButton,
   PopoverAnchor,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { MdMoreHoriz } from "react-icons/md";
 import {
@@ -154,6 +155,7 @@ const Output = ({ canvas, audioSrc, audioRef, playing, setPlaying }) => {
                 if (playing) {
                   audioPlayer.pause();
                 } else {
+                  audioPlayer.muted = true;
                   audioPlayer.play();
                 }
                 setPlaying(!playing);
@@ -675,6 +677,11 @@ const AutosizeTextarea = ({
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
   const [buttonDarkened, setButtonDarkened] = useState(false);
+  const toast = useToast({
+    containerStyle: {
+      marginLeft: "205px",
+    },
+  });
 
   const textareaShadow = useColorModeValue(
     "0 2px 4px rgba(0, 0, 0, 0.1)",
@@ -723,6 +730,29 @@ const AutosizeTextarea = ({
         runMusicGen(textarea.value);
         textarea.value = "";
         setButtonDarkened(false);
+      } else if (!canSwitchSongs) {
+        toast({
+          title: "Cannot generate song.",
+          description: "Please wait for the current song to finish generating.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else if (playing) {
+        toast({
+          title: "Cannot generate song.",
+          description: "Please pause the audio and try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else if (selectedSong === -1) {
+        toast({
+          title: "Please select a song.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     }
   };
@@ -737,6 +767,29 @@ const AutosizeTextarea = ({
       runMusicGen(textarea.value);
       textarea.value = "";
       setButtonDarkened(false);
+    } else if (!canSwitchSongs) {
+      toast({
+        title: "Cannot generate song.",
+        description: "Please wait for the current song to finish generating.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else if (playing) {
+      toast({
+        title: "Cannot generate song.",
+        description: "Please pause the audio and try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else if (selectedSong === -1) {
+      toast({
+        title: "Please select a song.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 

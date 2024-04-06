@@ -32,6 +32,7 @@ import {
   PopoverCloseButton,
   PopoverAnchor,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { GoTrash } from "react-icons/go";
 
@@ -60,6 +61,11 @@ const SongButton = ({
   const containerRef = useRef(null);
   const editableRef = useRef(null);
   const previewRef = useRef(null);
+  const toast = useToast({
+    containerStyle: {
+      marginLeft: "205px",
+    },
+  });
 
   useEffect(() => {
     if (isOpen && !isHovered) {
@@ -116,6 +122,23 @@ const SongButton = ({
           if (canSwitchSongs && !playing) {
             setSelectedSong(todo.todo_id);
             setMessageVisibility(true);
+          } else if (!canSwitchSongs && selectedSong !== todo.todo_id) {
+            toast({
+              title: "Cannot switch songs.",
+              description:
+                "Please wait for the current song to finish generating.",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          } else if (playing && selectedSong !== todo.todo_id) {
+            toast({
+              title: "Cannot switch songs.",
+              description: "Please pause the audio and try again.",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
           }
         }}
         width="92.25%"
@@ -325,6 +348,23 @@ const SongButton = ({
                           setMessageVisibility(true);
                         }
                         e.stopPropagation();
+                      } else if (!canSwitchSongs) {
+                        toast({
+                          title: "Cannot delete song while generating.",
+                          description:
+                            "Please wait for the song to render and try again.",
+                          status: "error",
+                          duration: 5000,
+                          isClosable: true,
+                        });
+                      } else if (playing) {
+                        toast({
+                          title: "Cannot delete song while playing.",
+                          description: "Please pause the audio and try again.",
+                          status: "error",
+                          duration: 5000,
+                          isClosable: true,
+                        });
                       }
                     }}
                     color="#EF4444"

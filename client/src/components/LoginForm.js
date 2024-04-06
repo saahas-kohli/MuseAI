@@ -13,6 +13,7 @@ import {
   Text,
   Image,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const [emailText, setEmailText] = useState("");
   const [passwordText, setPasswordText] = useState("");
   const navigate = useNavigate();
+  const toast = useToast();
 
   const getUser = async (email, password) => {
     try {
@@ -30,27 +32,48 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
         `http://localhost:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
-      if (
-        jsonData.emailExists &&
-        jsonData.userExists &&
-        jsonData.emailVerified
-      ) {
-        return true;
+      if (jsonData.emailExists && jsonData.userExists) {
+        if (jsonData.emailVerified)
+          return { userAuthenticated: true, userEmailVerified: true };
+        return { userAuthenticated: true, userEmailVerified: false };
       }
-      return false;
+      return { userAuthenticated: false, userEmailVerified: false };
     } catch (err) {
       console.error(err.message);
     }
   };
 
   const authenticateUser = async (email, password) => {
-    const userExistsAndVerified = await getUser(email, password);
-    if (userExistsAndVerified) {
+    const authenticationResult = await getUser(email, password);
+    if (
+      authenticationResult.userAuthenticated &&
+      authenticationResult.userEmailVerified
+    ) {
       setCurrentUser(email.toLowerCase());
       setLoggedIn(true);
       setTimeout(() => {
         navigate("/home");
       }, 200);
+    } else if (
+      authenticationResult.userAuthenticated &&
+      !authenticationResult.userEmailVerified
+    ) {
+      toast({
+        title: "Confirm your email address.",
+        description: "Please check your email for a verification link.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Account could not be found.",
+        description:
+          "Please verify your credentials or sign up for a new account.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 

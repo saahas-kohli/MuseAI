@@ -1,4 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, useToast } from "@chakra-ui/react";
 import React, { useRef, useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
@@ -35,7 +35,12 @@ function App() {
   const [outputVisible, setOutputVisibility] = useState(false);
 
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider
+      theme={theme}
+      toastOptions={{
+        defaultOptions: { position: "top" },
+      }}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
