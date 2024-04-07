@@ -508,7 +508,6 @@ const StagingArea = ({
     setCanvasReady(true);
   };
 
-
   const runMusicGen = (musicDescription) => {
     if (messageVisible) {
       setMessageVisibility(false);
@@ -530,20 +529,19 @@ const StagingArea = ({
         setOutputVisibility(true);
         // Data.output changes here
         data = JSON.parse(event.data);
-  
+
         updateAudio();
         prepareCanvas();
-  
+
         // console.log("This is the music data log!");
         // console.log(data.output.slice(0, 20));
       };
       setTimeout(() => {
-        if(!ws || ws.readyState !== WebSocket.OPEN) {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
           setTimeout(() => {
             runMusicGen(musicDescription);
-          }, 5000)
-        }
-        else runMusicGen(musicDescription);
+          }, 5000);
+        } else runMusicGen(musicDescription);
       }, 10000);
     }
   };
@@ -719,7 +717,6 @@ const AutosizeTextarea = ({
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
   const [buttonDarkened, setButtonDarkened] = useState(false);
-  const [defaultDescription, setDefaultDescription] = useState("");
   const toast = useToast({
     containerStyle: {
       marginLeft: "205px",
@@ -744,9 +741,9 @@ const AutosizeTextarea = ({
 
   const updateDescription = async (description) => {
     try {
+      console.log(description + " AND " + selectedSong);
       const body = { description };
       const user = currentUser;
-      setListRender(!listRender);
       const response = await fetch(
         `http://localhost:9000/todos/${user}/${selectedSong}`,
         {
@@ -760,7 +757,7 @@ const AutosizeTextarea = ({
     }
   };
 
-  const addToList = async () => {
+  const addToList = async (defaultDescription) => {
     try {
       const body = { defaultDescription };
       const user = currentUser;
@@ -783,12 +780,14 @@ const AutosizeTextarea = ({
       e.preventDefault();
       const textarea = ref.current;
       const temp = textarea.value;
-      if (temp != "" && canSwitchSongs && !playing) {
-        if(selectedSong === -1) {
-          addToList();
+      if (temp !== "" && canSwitchSongs && !playing) {
+        if (selectedSong === -1) {
+          addToList(temp);
+        } else {
+          updateDescription(temp);
         }
         setCanSwitchSongs(false);
-        updateDescription(temp);
+        setListRender(!listRender);
         setEnteredDesc(textarea.value);
         runMusicGen(textarea.value);
         textarea.value = "";
@@ -809,19 +808,20 @@ const AutosizeTextarea = ({
           duration: 5000,
           isClosable: true,
         });
-      } 
+      }
     }
   };
 
   const handleEnterButton = () => {
     const textarea = ref.current;
     const temp = textarea.value;
-    if (temp != "" && canSwitchSongs && !playing) {
-      if(selectedSong === -1) {
-        addToList();
+    if (temp !== "" && canSwitchSongs && !playing) {
+      if (selectedSong === -1) {
+        addToList(temp);
+      } else {
+        updateDescription(temp);
       }
       setCanSwitchSongs(false);
-      updateDescription(temp);
       setEnteredDesc(textarea.value);
       runMusicGen(textarea.value);
       textarea.value = "";
@@ -842,7 +842,7 @@ const AutosizeTextarea = ({
         duration: 5000,
         isClosable: true,
       });
-    } 
+    }
   };
 
   const handleChange = () => {
