@@ -96,6 +96,7 @@ function App() {
                   <Box flex="1" bg="">
                     <StagingArea
                       selectedSong={selectedSong}
+                      setSelectedSong={setSelectedSong}
                       listRender={listRender}
                       setListRender={setListRender}
                       currentUser={currentUser}

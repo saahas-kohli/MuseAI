@@ -39,8 +39,9 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 
-let data = "Default value";
 let ws = new WebSocket("ws://localhost:6789"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
+let data = "Default value";
+console.log("Starting up Websocket!");
 
 /*
 ws.onopen = function (e) {
@@ -176,6 +177,7 @@ const Output = ({ canvas, audioSrc, audioRef, playing, setPlaying }) => {
 
 const StagingArea = ({
   selectedSong,
+  setSelectedSong,
   listRender,
   setListRender,
   currentUser,
@@ -438,6 +440,22 @@ const StagingArea = ({
     }
   };
 
+  // useEffect(() => {
+  //   ws.onmessage = (event) => {
+  //     //console.log(selectedSong);
+  //     setRenderingVisibility(false);
+  //     setOutputVisibility(true);
+  //     // Data.output changes here
+  //     data = JSON.parse(event.data);
+
+  //     updateAudio();
+  //     prepareCanvas();
+
+  //     // console.log("This is the music data log!");
+  //     // console.log(data.output.slice(0, 20));
+  //   };
+  // }, []);
+
   useEffect(() => {
     ws.onmessage = (event) => {
       //console.log(selectedSong);
@@ -490,6 +508,7 @@ const StagingArea = ({
     setCanvasReady(true);
   };
 
+
   const runMusicGen = (musicDescription) => {
     if (messageVisible) {
       setMessageVisibility(false);
@@ -503,8 +522,29 @@ const StagingArea = ({
       const thisData = { prompt: musicDescription };
       ws.send(JSON.stringify(thisData));
     } else {
-      //ws = new WebSocket("ws://localhost:6789");
-      console.error("WebSocket is not connected.");
+      console.log("WebSocket is not connected. Reconnecting...");
+      ws = new WebSocket("ws://localhost:6789");
+      ws.onmessage = (event) => {
+        //console.log(selectedSong);
+        setRenderingVisibility(false);
+        setOutputVisibility(true);
+        // Data.output changes here
+        data = JSON.parse(event.data);
+  
+        updateAudio();
+        prepareCanvas();
+  
+        // console.log("This is the music data log!");
+        // console.log(data.output.slice(0, 20));
+      };
+      setTimeout(() => {
+        if(!ws || ws.readyState !== WebSocket.OPEN) {
+          setTimeout(() => {
+            runMusicGen(musicDescription);
+          }, 5000)
+        }
+        else runMusicGen(musicDescription);
+      }, 10000);
     }
   };
 
@@ -635,6 +675,7 @@ const StagingArea = ({
           setEnteredDesc={setEnteredDesc}
           runMusicGen={runMusicGen}
           selectedSong={selectedSong}
+          setSelectedSong={setSelectedSong}
           listRender={listRender}
           setListRender={setListRender}
           currentUser={currentUser}
@@ -665,6 +706,7 @@ const AutosizeTextarea = ({
   setEnteredDesc,
   runMusicGen,
   selectedSong,
+  setSelectedSong,
   listRender,
   setListRender,
   currentUser,
@@ -677,6 +719,7 @@ const AutosizeTextarea = ({
   const ref = useRef(null);
   const [flag, setFlag] = useState(false);
   const [buttonDarkened, setButtonDarkened] = useState(false);
+  const [defaultDescription, setDefaultDescription] = useState("");
   const toast = useToast({
     containerStyle: {
       marginLeft: "205px",
@@ -717,13 +760,33 @@ const AutosizeTextarea = ({
     }
   };
 
+  const addToList = async () => {
+    try {
+      const body = { defaultDescription };
+      const user = currentUser;
+      const response = await fetch(`http://localhost:9000/todos/${user}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const newSongId = await response.json();
+      setSelectedSong(newSongId);
+      setListRender(!listRender);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   const handleEnter = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       // Prevent the default behavior (adding a new line)
       e.preventDefault();
       const textarea = ref.current;
       const temp = textarea.value;
-      if (temp != "" && canSwitchSongs && !playing && selectedSong !== -1) {
+      if (temp != "" && canSwitchSongs && !playing) {
+        if(selectedSong === -1) {
+          addToList();
+        }
         setCanSwitchSongs(false);
         updateDescription(temp);
         setEnteredDesc(textarea.value);
@@ -746,21 +809,17 @@ const AutosizeTextarea = ({
           duration: 5000,
           isClosable: true,
         });
-      } else if (selectedSong === -1) {
-        toast({
-          title: "Please select a song.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+      } 
     }
   };
 
   const handleEnterButton = () => {
     const textarea = ref.current;
     const temp = textarea.value;
-    if (temp != "" && canSwitchSongs && !playing && selectedSong !== -1) {
+    if (temp != "" && canSwitchSongs && !playing) {
+      if(selectedSong === -1) {
+        addToList();
+      }
       setCanSwitchSongs(false);
       updateDescription(temp);
       setEnteredDesc(textarea.value);
@@ -783,14 +842,7 @@ const AutosizeTextarea = ({
         duration: 5000,
         isClosable: true,
       });
-    } else if (selectedSong === -1) {
-      toast({
-        title: "Please select a song.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+    } 
   };
 
   const handleChange = () => {

@@ -23,7 +23,8 @@ app.post("/todos/:user", async (req, res) => {
       `INSERT INTO "${user}" (description) VALUES($1) RETURNING *;`,
       [defaultDescription]
     );
-    res.json(newTodo.rows[0]);
+    console.log(newTodo.rows[0].todo_id);
+    res.json(newTodo.rows[0].todo_id);
   } catch (err) {
     console.error(err.message);
   }
