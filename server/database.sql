@@ -13,6 +13,6 @@ CREATE TABLE authentication(
     password VARCHAR(255)
 );
 
-CREATE TABLE emailVerification ( email VARCHAR(255) NOT NULL UNIQUE,     is_verified BOOLEAN NOT NULL DEFAULT FALSE );
+CREATE TABLE email_verification ( email VARCHAR(255) NOT NULL UNIQUE,     is_verified BOOLEAN NOT NULL DEFAULT FALSE );
 
 /* Remaining tables like 'todo' but with names corresponding to user emails */

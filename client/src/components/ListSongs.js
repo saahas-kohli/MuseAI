@@ -17,8 +17,8 @@ function ListSongs({
   setPlaying,
   messageVisible,
   setMessageVisibility,
-  outputVisible, 
-  setOutputVisibility
+  outputVisible,
+  setOutputVisibility,
 }) {
   const [todos, setTodos] = useState([]);
 
@@ -58,6 +58,7 @@ function ListSongs({
         .sort((a, b) => {
           return a.todo_id > b.todo_id ? 1 : -1;
         })
+        .reverse()
         .map((todo, i) => (
           <ListItem key={todo.todo_id}>
             <SongButton

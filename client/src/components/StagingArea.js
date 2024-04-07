@@ -757,7 +757,7 @@ const AutosizeTextarea = ({
     }
   };
 
-  const addToList = async (defaultDescription) => {
+  const addNewSong = async (defaultDescription) => {
     try {
       const body = { defaultDescription };
       const user = currentUser;
@@ -782,7 +782,7 @@ const AutosizeTextarea = ({
       const temp = textarea.value;
       if (temp !== "" && canSwitchSongs && !playing) {
         if (selectedSong === -1) {
-          addToList(temp);
+          addNewSong(temp);
         } else {
           updateDescription(temp);
         }
@@ -817,7 +817,7 @@ const AutosizeTextarea = ({
     const temp = textarea.value;
     if (temp !== "" && canSwitchSongs && !playing) {
       if (selectedSong === -1) {
-        addToList(temp);
+        addNewSong(temp);
       } else {
         updateDescription(temp);
       }

@@ -53,7 +53,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
         `http://localhost:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
-      if (jsonData.emailExists && jsonData.userExists) {
+      if (jsonData.emailExists) {
         return true;
       }
       return false;
@@ -216,7 +216,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                       toast({
                         title: "Failed to create account.",
                         description:
-                          "One or more of the above fields requires revision.",
+                          "One or more of the fields below needs revision.",
                         status: "error",
                         duration: 5000,
                         isClosable: true,

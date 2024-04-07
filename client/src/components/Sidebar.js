@@ -55,18 +55,11 @@ const Sidebar = ({
   const [defaultDescription, setDefaultDescription] = useState("");
   const navigate = useNavigate();
 
-  const addToList = async (e) => {
-    e.preventDefault();
+  const getReadyToAddNewSong = async () => {
     try {
-      const body = { defaultDescription };
-      const user = currentUser;
-      const response = await fetch(`http://localhost:9000/todos/${user}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      setListRender(!listRender);
+      setSelectedSong(-1);
+      setMessageVisibility(true);
+      //setListRender(!listRender);
     } catch (err) {
       console.error(err.message);
     }
@@ -100,7 +93,7 @@ const Sidebar = ({
             _active={{
               transform: "scale(0.98)",
             }}
-            onClick={addToList}
+            onClick={getReadyToAddNewSong}
           >
             <Flex marginLeft="-8.5px">
               <Box>
