@@ -333,8 +333,9 @@ const StagingArea = ({
           ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
 
           // Calculate positions for symmetric bars
-          const xPosLeft = canvasMidpoint - (i * (barWidth + 0.25) + barWidth); // Position for the left bar
-          const xPosRight = canvasMidpoint + i * (barWidth + 0.25); // Position for the right bar
+          const xPosLeft =
+            canvasMidpoint - (i * (barWidth + 0.25) + barWidth) - 0.125; // Position for the left bar
+          const xPosRight = canvasMidpoint + i * (barWidth + 0.25) + 0.125; // Position for the right bar
 
           // Draw left bar
           drawBar(xPosLeft, gradientStartY, barWidth, barHeight);

@@ -93,7 +93,11 @@ const Sidebar = ({
             _active={{
               transform: "scale(0.98)",
             }}
-            onClick={getReadyToAddNewSong}
+            onClick={() => {
+              if (canSwitchSongs && !playing) {
+                getReadyToAddNewSong();
+              }
+            }}
           >
             <Flex marginLeft="-8.5px">
               <Box>
