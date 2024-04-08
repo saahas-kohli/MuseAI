@@ -29,7 +29,7 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const getUser = async (email, password) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/users/${email}/${password}`
+        `http://3.133.141.192:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
       if (jsonData.emailExists && jsonData.userExists) {

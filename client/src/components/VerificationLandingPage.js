@@ -31,7 +31,7 @@ function VerificationLandingPage({}) {
 
   const verifyEmailToken = async (token) => {
     const response = await fetch(
-      `http://localhost:9000/verify-email?token=${token}`
+      `http://3.133.141.192:9000/verify-email?token=${token}`
     );
     const jsonData = await response.json();
     console.log("Verifying token: ", token);

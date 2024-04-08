@@ -98,7 +98,7 @@ const SongButton = ({
       const body = { description };
       const user = currentUser;
       const response = await fetch(
-        `http://localhost:9000/todos/${user}/${todo.todo_id}`,
+        `http://3.133.141.192:9000/todos/${user}/${todo.todo_id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

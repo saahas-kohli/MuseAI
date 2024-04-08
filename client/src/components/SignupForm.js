@@ -37,7 +37,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const createUser = async (email, password) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/todos/${email}/${password}`,
+        `http://3.133.141.192:9000/todos/${email}/${password}`,
         {
           method: "POST",
         }
@@ -50,7 +50,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const emailExists = async (email, password) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/users/${email}/${password}`
+        `http://3.133.141.192:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
       if (jsonData.emailExists) {
@@ -79,7 +79,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const sendVerificationEmail = async (email) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/send-verify/${email}`,
+        `http://3.133.141.192:9000/send-verify/${email}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

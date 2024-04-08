@@ -27,9 +27,12 @@ function ListSongs({
     try {
       const user = currentUser;
       setTodos(todos.filter((todo) => todo.todo_id !== id));
-      const delTodo = await fetch(`http://localhost:9000/todos/${user}/${id}`, {
-        method: "DELETE",
-      });
+      const delTodo = await fetch(
+        `http://3.133.141.192:9000/todos/${user}/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
     } catch (err) {
       console.error(err.message);
     }
@@ -38,7 +41,7 @@ function ListSongs({
   const getTodos = async () => {
     try {
       const user = currentUser;
-      const response = await fetch(`http://localhost:9000/todos/${user}`);
+      const response = await fetch(`http://3.133.141.192:9000/todos/${user}`);
       const jsonData = await response.json();
 
       setTodos(jsonData);
