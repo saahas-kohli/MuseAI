@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    environment:
+      DB_SCHEMA: public
+      DB_USER: postgres
+      DB_PASSWORD: test
+      DB_HOST: db
+
+  server:
+    build:
+      context: ./server
+    ports:
+      - "9000:9000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PGUSER=${POSTGRES_USER}
+
+  db:
+    build:
+      context: ./database
+    ports:
+      - "5432:5432"
+    depends_on:
+      - py
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test
+      PGUSER: "postgres"
+    healthcheck:
+      #CHANGE 1: this command checks if the database is ready, right on the source db server
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  py:
+    build:
+      context: ./python_server
+    ports:
+      - "6789:6789"
