@@ -39,7 +39,7 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 
-let ws = new WebSocket("ws://localhost:6789"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
+let ws = new WebSocket("ws://127.0.0.1:8000"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
 let data = "Default value";
 console.log("Starting up Websocket!");
 
@@ -523,7 +523,7 @@ const StagingArea = ({
       ws.send(JSON.stringify(thisData));
     } else {
       console.log("WebSocket is not connected. Reconnecting...");
-      ws = new WebSocket("ws://localhost:6789");
+      ws = new WebSocket("ws://127.0.0.1:8000");
       ws.onmessage = (event) => {
         //console.log(selectedSong);
         setRenderingVisibility(false);

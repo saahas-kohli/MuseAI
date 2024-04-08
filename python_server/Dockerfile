@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Make port 6789 available to the world outside this container
 # (Assuming your WebSocket app uses port 6789, change it if needed)
-EXPOSE 6789
+EXPOSE 8000
 
 # Run fauxMusicGen.py when the container launches
 CMD ["python3", "fauxMusicGen.py"]

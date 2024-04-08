@@ -47,4 +47,4 @@ services:
     build:
       context: ./python_server
     ports:
-      - "6789:6789"
+      - "8000:8000"
