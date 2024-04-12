@@ -3,6 +3,7 @@ import { Box } from "@chakra-ui/react";
 import { List, ListItem } from "@chakra-ui/react";
 
 import SongButton from "./SongButton";
+import { PUBLIC_IP } from "../deploy_config_client";
 
 function ListSongs({
   listRender,
@@ -28,7 +29,7 @@ function ListSongs({
       const user = currentUser;
       setTodos(todos.filter((todo) => todo.todo_id !== id));
       const delTodo = await fetch(
-        `http://3.133.141.192:9000/todos/${user}/${id}`,
+        `http://${PUBLIC_IP}:9000/todos/${user}/${id}`,
         {
           method: "DELETE",
         }
@@ -41,7 +42,7 @@ function ListSongs({
   const getTodos = async () => {
     try {
       const user = currentUser;
-      const response = await fetch(`http://3.133.141.192:9000/todos/${user}`);
+      const response = await fetch(`http://${PUBLIC_IP}:9000/todos/${user}`);
       const jsonData = await response.json();
 
       setTodos(jsonData);

@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OAuthButtonGroup from "./OAuthButtonGroup.js";
 import PasswordField from "./PasswordField.js";
+import { PUBLIC_IP } from "../deploy_config_client";
 
 const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const [emailText, setEmailText] = useState("");
@@ -29,7 +30,7 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const getUser = async (email, password) => {
     try {
       const response = await fetch(
-        `http://3.133.141.192:9000/users/${email}/${password}`
+        `http://${PUBLIC_IP}:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
       if (jsonData.emailExists && jsonData.userExists) {

@@ -35,6 +35,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { GoTrash } from "react-icons/go";
+import { PUBLIC_IP } from "../deploy_config_client";
 
 const SongButton = ({
   todo,
@@ -98,7 +99,7 @@ const SongButton = ({
       const body = { description };
       const user = currentUser;
       const response = await fetch(
-        `http://3.133.141.192:9000/todos/${user}/${todo.todo_id}`,
+        `http://${PUBLIC_IP}:9000/todos/${user}/${todo.todo_id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -184,6 +185,7 @@ const SongButton = ({
             }}
           >
             <Editable
+              id={todo.todo_id}
               isPreviewFocusable={previewFocusable}
               ref={editableRef}
               value={todo.description}

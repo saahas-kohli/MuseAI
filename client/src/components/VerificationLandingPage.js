@@ -16,6 +16,7 @@ import {
   Image,
   Link,
 } from "@chakra-ui/react";
+import { PUBLIC_IP } from "../deploy_config_client";
 
 function VerificationLandingPage({}) {
   const location = useLocation();
@@ -31,7 +32,7 @@ function VerificationLandingPage({}) {
 
   const verifyEmailToken = async (token) => {
     const response = await fetch(
-      `http://3.133.141.192:9000/verify-email?token=${token}`
+      `http://${PUBLIC_IP}:9000/verify-email?token=${token}`
     );
     const jsonData = await response.json();
     console.log("Verifying token: ", token);

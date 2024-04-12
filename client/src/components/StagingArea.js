@@ -38,8 +38,9 @@ import {
   MenuOptionGroup,
   MenuDivider,
 } from "@chakra-ui/react";
+import { PUBLIC_IP } from "../deploy_config_client";
 
-let ws = new WebSocket("ws://3.133.141.192:6789"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
+let ws = new WebSocket("ws://" + PUBLIC_IP + ":8000"); // MAKE SURE PYTHON SERVER RUNS BEFORE THIS CLIENT CODE!
 let data = "Default value";
 console.log("Starting up Websocket!");
 
@@ -411,7 +412,7 @@ const StagingArea = ({
       //console.log(audioData.substring(0, 20) + " " + audioData.length);
       const body = { audioData };
       const response = await fetch(
-        `http://3.133.141.192:9000/audio/${user}/${id}`,
+        `http://${PUBLIC_IP}:9000/audio/${user}/${id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -429,7 +430,7 @@ const StagingArea = ({
       const user = currentUser;
       const id = selectedSong;
       const response = await fetch(
-        `http://3.133.141.192:9000/audio/${user}/${id}`
+        `http://${PUBLIC_IP}:9000/audio/${user}/${id}`
       );
       const jsonData = await response.json();
       if (jsonData.exists && jsonData.audioData !== null) {
@@ -525,7 +526,7 @@ const StagingArea = ({
       ws.send(JSON.stringify(thisData));
     } else {
       console.log("WebSocket is not connected. Reconnecting...");
-      ws = new WebSocket("ws://3.133.141.192:6789");
+      ws = new WebSocket("ws://" + PUBLIC_IP + ":8000");
       ws.onmessage = (event) => {
         //console.log(selectedSong);
         setRenderingVisibility(false);
@@ -748,7 +749,7 @@ const AutosizeTextarea = ({
       const body = { description };
       const user = currentUser;
       const response = await fetch(
-        `http://3.133.141.192:9000/todos/${user}/${selectedSong}`,
+        `http://${PUBLIC_IP}:9000/todos/${user}/${selectedSong}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -764,7 +765,7 @@ const AutosizeTextarea = ({
     try {
       const body = { defaultDescription };
       const user = currentUser;
-      const response = await fetch(`http://3.133.141.192:9000/todos/${user}`, {
+      const response = await fetch(`http://${PUBLIC_IP}:9000/todos/${user}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import OAuthButtonGroup from "./OAuthButtonGroup.js";
 import PasswordField from "./PasswordField.js";
 import ConfirmPasswordField from "./ConfirmPasswordField.js";
+import { PUBLIC_IP } from "../deploy_config_client.js";
 
 const validator = require("validator");
 //const sendEmail = require('./emailSender');
@@ -37,7 +38,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const createUser = async (email, password) => {
     try {
       const response = await fetch(
-        `http://3.133.141.192:9000/todos/${email}/${password}`,
+        `http://${PUBLIC_IP}:9000/todos/${email}/${password}`,
         {
           method: "POST",
         }
@@ -50,7 +51,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const emailExists = async (email, password) => {
     try {
       const response = await fetch(
-        `http://3.133.141.192:9000/users/${email}/${password}`
+        `http://${PUBLIC_IP}:9000/users/${email}/${password}`
       );
       const jsonData = await response.json();
       if (jsonData.emailExists) {
@@ -79,7 +80,7 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
   const sendVerificationEmail = async (email) => {
     try {
       const response = await fetch(
-        `http://3.133.141.192:9000/send-verify/${email}`,
+        `http://${PUBLIC_IP}:9000/send-verify/${email}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
