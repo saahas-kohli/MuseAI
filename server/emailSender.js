@@ -1,4 +1,4 @@
-import { PUBLIC_IP } from "./deploy_config_server";
+const PUBLIC_IP = "3.23.103.220";
 const CryptoJS = require("crypto-js");
 const nodemailer = require("nodemailer");
 const pool = require("./db");
