@@ -51,6 +51,8 @@ const Sidebar = ({
   setMessageVisibility,
   outputVisible,
   setOutputVisibility,
+  guestSession,
+  setGuestSession,
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
   const navigate = useNavigate();
@@ -243,6 +245,7 @@ const Sidebar = ({
                   navigate("/login");
                 } else {
                   setLoggedIn(false);
+                  localStorage.removeItem("MuseAIUsername");
                   navigate("/login");
                 }
               }}

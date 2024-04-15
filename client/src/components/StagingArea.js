@@ -190,6 +190,8 @@ const StagingArea = ({
   setMessageVisibility,
   outputVisible,
   setOutputVisibility,
+  guestSession,
+  setGuestSession,
 }) => {
   const [enteredDesc, setEnteredDesc] = useState("");
   const canvas = useRef(null);
@@ -199,6 +201,9 @@ const StagingArea = ({
   const [play, setPlay] = useState(false);
   const [audioSrc, setAudioSrc] = useState("");
   const audioRef = useRef(null);
+  // const [canDelete, setCanDelete] = useState(false);
+
+  let isUnmount = false;
 
   /*
   useEffect(() => {
@@ -207,6 +212,52 @@ const StagingArea = ({
     }
   }, [play]);
   */
+
+  const deleteGuestTable = async (guestName) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/deleteGuestTable/${guestName}`,
+        {
+          method: "POST",
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  // useEffect( () => {
+  //   console.log("MOUNTING OR UNMO");
+  // }, [] );
+  // useEffect( () => () => {
+  //   if(isUnmount) console.log("UNMOUNTING FOR REAL");
+  //   setIsUnmount(true);
+  // }, [] );
+
+  // useEffect(() => () => console.log("Unmount"), [canDelete]);
+
+  useEffect(() => {
+    console.log("Component mounted");
+
+    const copyIsUnmount = isUnmount;
+    isUnmount = true;
+    return () => {
+      if (copyIsUnmount) {
+        console.log("Component unmounted");
+        // IMPORTANT;
+        if (guestSession) {
+          deleteGuestTable(currentUser);
+          setCurrentUser("todo");
+        }
+      }
+    };
+  }, []);
+
+  // Above code deletes guest table on unmount, but not on page reload or page close
+
+  // useEffect(() => {
+  //   console.log("isUnmount is " + isUnmount);
+  // }, [isUnmount]);
 
   useEffect(() => {
     console.log("Prompt is '" + enteredDesc + "'");
@@ -788,7 +839,7 @@ const AutosizeTextarea = ({
           updateDescription(temp);
         }
         setCanSwitchSongs(false);
-        setListRender(!listRender);
+        //setListRender(!listRender);
         setEnteredDesc(textarea.value);
         runMusicGen(textarea.value);
         textarea.value = "";

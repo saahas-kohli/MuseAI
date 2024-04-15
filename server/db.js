@@ -40,7 +40,7 @@ pool.query(
 );
 
 pool.query(
-  "CREATE TABLE email_verification (email VARCHAR(255) NOT NULL UNIQUE, is_verified BOOLEAN NOT NULL DEFAULT FALSE);",
+  "CREATE TABLE email_verification (email VARCHAR(255) NOT NULL UNIQUE, token VARCHAR(255), is_verified BOOLEAN NOT NULL DEFAULT FALSE);",
   (err, result) => {
     if (err) {
       console.error("Error making table", err);

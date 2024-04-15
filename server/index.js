@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
-const sendEmail = require("./emailSender");
+const {
+  sendVerificationEmail,
+  sendForgotPasswordEmail,
+} = require("./emailSender");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: "10mb" }));
 
@@ -73,14 +76,52 @@ app.post("/todos/:email/:password", async (req, res) => {
   }
 });
 
+// create a table not named after any other email and not named "authentication"
+app.post("/createGuestTable/:guestName", async (req, res) => {
+  try {
+    const { guestName } = req.params;
+    const newUser = await pool.query(
+      `CREATE TABLE "${guestName}" (todo_id SERIAL PRIMARY KEY, description VARCHAR(255), audio TEXT);`
+    );
+    res.json("Temporary guest table created!");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+// delete the randomized guest table
+app.post("/deleteGuestTable/:guestName", async (req, res) => {
+  try {
+    const { guestName } = req.params;
+    await pool.query(`DROP TABLE IF EXISTS "${guestName}";`);
+    res.json(`Temporary guest table ${guestName} deleted!`);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json("Error while deleting the table");
+  }
+});
+
 //send verification email
 
 app.post("/send-verify/:email", async (req, res) => {
   try {
     const { email } = req.params;
     const lowercaseEmail = email.toLowerCase();
-    await sendEmail(lowercaseEmail);
+    await sendVerificationEmail(lowercaseEmail);
     res.json("Verification email sent!");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//send forgot-password email
+
+app.post("/forgot-password/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const lowercaseEmail = email.toLowerCase();
+    await sendForgotPasswordEmail(lowercaseEmail);
+    res.json("Forgot-password email sent!");
   } catch (err) {
     console.error(err.message);
   }

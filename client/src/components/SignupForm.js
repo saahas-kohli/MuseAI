@@ -25,7 +25,14 @@ import ConfirmPasswordField from "./ConfirmPasswordField.js";
 const validator = require("validator");
 //const sendEmail = require('./emailSender');
 
-const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
+const SignupForm = ({
+  loggedIn,
+  setLoggedIn,
+  currentUser,
+  setCurrentUser,
+  guestSession,
+  setGuestSession,
+}) => {
   const [emailText, setEmailText] = useState("");
   const [emailInvalid, setEmailInvalid] = useState(false);
   const [dupEmailExists, setDupEmailExists] = useState(false);
@@ -179,9 +186,6 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                   setConfirmText={setConfirmText}
                 />
               </Stack>
-              <HStack justify="space-between">
-                <Checkbox defaultChecked>Remember me</Checkbox>
-              </HStack>
               <Stack spacing="3">
                 <Button
                   fontSize="15px"
@@ -232,6 +236,8 @@ const SignupForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                   setCurrentUser={setCurrentUser}
                   loggedIn={loggedIn}
                   setLoggedIn={setLoggedIn}
+                  guestSession={guestSession}
+                  setGuestSession={setGuestSession}
                 />
               </Stack>
             </Stack>

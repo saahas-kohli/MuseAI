@@ -33,6 +33,7 @@ function App() {
   const [playing, setPlaying] = useState(false);
   const [messageVisible, setMessageVisibility] = useState(true);
   const [outputVisible, setOutputVisibility] = useState(false);
+  const [guestSession, setGuestSession] = useState(false);
 
   return (
     <ChakraProvider
@@ -52,6 +53,8 @@ function App() {
                 setLoggedIn={setLoggedIn}
                 currentUser={currentUser}
                 setCurrentUser={setCurrentUser}
+                guestSession={guestSession}
+                setGuestSession={setGuestSession}
               ></LoginForm>
             }
           />
@@ -63,6 +66,8 @@ function App() {
                 setLoggedIn={setLoggedIn}
                 currentUser={currentUser}
                 setCurrentUser={setCurrentUser}
+                guestSession={guestSession}
+                setGuestSession={setGuestSession}
               ></SignupForm>
             }
           />
@@ -90,6 +95,8 @@ function App() {
                         setMessageVisibility={setMessageVisibility}
                         outputVisible={outputVisible}
                         setOutputVisibility={setOutputVisibility}
+                        guestSession={guestSession}
+                        setGuestSession={setGuestSession}
                       ></Sidebar>
                     </Box>
                   </Box>
@@ -109,6 +116,8 @@ function App() {
                       setMessageVisibility={setMessageVisibility}
                       outputVisible={outputVisible}
                       setOutputVisibility={setOutputVisibility}
+                      guestSession={guestSession}
+                      setGuestSession={setGuestSession}
                     />
                   </Box>
                 </Flex>

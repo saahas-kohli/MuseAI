@@ -1,46 +1,3 @@
-/*
-
-const nodemailer = require('nodemailer');
-
-let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    port: 587,
-    secure: false,
-    auth: {
-      user: 'museai.auth@gmail.com',
-      pass: 'ywga vduk kadj errp'
-    }
-  });
-  
-function sendEmail(userEmail)
-{
-    const html_head = '<html><body>Hello'+'!<br><br>';
-    const link = "";
-    const html_body = 'Please verify your email address in order to continue to MuseAI: ' + link + '<br>'
-    let str = ""
-    str+="<br>Sincerely, <br>"
-    str+="MuseAI</body></html>"
-    let mailOptions = {
-      from: 'museai.auth@gmail.com',
-      to: userEmail,
-      subject: 'Confirm your MuseAI email.',
-      html: html_head+html_body+str
-    };
-      
-    transporter.sendMail(mailOptions, function(err, data) {
-      if (err) {
-        console.log("Error " + err);
-      } else {
-        console.log("Email sent successfully");
-      }
-    });    
-}
-
-sendEmail('danielrobertfields@gmail.com');
-console.log("Running singular file is working!");
-
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
-
 // import CryptoJS from 'crypto-js';
 const CryptoJS = require("crypto-js");
 
@@ -58,7 +15,7 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-async function sendEmail(userEmail) {
+async function sendVerificationEmail(userEmail) {
   const token = CryptoJS.SHA256(userEmail).toString(CryptoJS.enc.Hex);
   // const token = crypto.randomBytes(20).toString('hex'); // Generate a unique token
   // There is a very low probability (1/2^80?) that the same token is generated twice
@@ -94,6 +51,39 @@ async function sendEmail(userEmail) {
   });
 }
 
-//sendEmail('danielrobertfields@gmail.com');
-//console.log("Script ran successfully");
-module.exports = sendEmail;
+async function sendForgotPasswordEmail(userEmail) {
+  const response = await pool.query(
+    `SELECT password FROM authentication WHERE email = $1;`,
+    [userEmail]
+  );
+  const password = response.rows[0].password;
+
+  const htmlContent = `<html><body>
+                            Hello!<br><br>
+                            Here's the password for your MuseAI account:<br> 
+                            ${password}<br>
+                            <br>Sincerely, <br>MuseAI
+                          </body></html>`;
+
+  let mailOptions = {
+    from: "museai.auth@gmail.com",
+    to: userEmail,
+    subject: "Forgot MuseAI password",
+    html: htmlContent,
+  };
+
+  transporter.sendMail(mailOptions, function (err, data) {
+    if (err) {
+      console.log("Error: ", err);
+    } else {
+      console.log("Email sent successfully");
+      // Here, you should also save the token and userEmail to your database
+      // for later verification. This step is not shown.
+    }
+  });
+}
+
+module.exports = {
+  sendVerificationEmail: sendVerificationEmail,
+  sendForgotPasswordEmail: sendForgotPasswordEmail,
+};
