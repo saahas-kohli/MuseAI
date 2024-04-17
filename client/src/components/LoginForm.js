@@ -15,17 +15,66 @@ import {
   Link,
   useToast,
 } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
+import React, { useEffect, useState, useRef } from "react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OAuthButtonGroup from "./OAuthButtonGroup.js";
 import PasswordField from "./PasswordField.js";
 import { PUBLIC_IP } from "../deploy_config_client";
 
-const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
+const LoginForm = ({
+  loggedIn,
+  setLoggedIn,
+  currentUser,
+  setCurrentUser,
+  guestSession,
+  setGuestSession,
+}) => {
   const [emailText, setEmailText] = useState("");
   const [passwordText, setPasswordText] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const initialRef = useRef(null);
+
+  useEffect(() => {
+    const tableName = localStorage.getItem("MuseAIUsername");
+    if (tableName !== null) {
+      setCurrentUser(tableName);
+      setLoggedIn(true);
+      if (!tableName.includes("@")) {
+        setGuestSession(true);
+      }
+      setTimeout(() => {
+        navigate("/home");
+      }, 200);
+    }
+  }, []);
+
+  const sendForgotPasswordEmail = async (email) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9000/forgot-password/${email}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   const getUser = async (email, password) => {
     try {
@@ -155,16 +204,57 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                 />
               </Stack>
               <HStack justify="space-between">
-                <Checkbox defaultChecked>Remember me</Checkbox>
                 <Text
                   fontSize="14px"
                   fontWeight="semibold"
                   color="#2A6DB0"
                   _hover={{ color: "#2D5283", cursor: "pointer" }}
                   marginTop="9px"
+                  onClick={onOpen}
                 >
                   Forgot password?
                 </Text>
+                <Modal
+                  initialFocusRef={initialRef}
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  isCentered
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>Send password to your email</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={5}>
+                      <FormControl>
+                        <Input ref={initialRef} placeholder="Email" />
+                      </FormControl>
+                    </ModalBody>
+
+                    <ModalFooter>
+                      <Button
+                        colorScheme="blue"
+                        mr={3}
+                        onClick={() => {
+                          sendForgotPasswordEmail(initialRef.current.value);
+                          toast({
+                            title: "Account credentials sent.",
+                            description:
+                              "We've sent your password to " +
+                              initialRef.current.value +
+                              ".",
+                            status: "success",
+                            duration: 5000,
+                            isClosable: true,
+                          });
+                          onClose();
+                        }}
+                      >
+                        Send
+                      </Button>
+                      <Button onClick={onClose}>Cancel</Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
               </HStack>
               <Stack spacing="3">
                 <Button
@@ -186,6 +276,8 @@ const LoginForm = ({ loggedIn, setLoggedIn, currentUser, setCurrentUser }) => {
                   setCurrentUser={setCurrentUser}
                   loggedIn={loggedIn}
                   setLoggedIn={setLoggedIn}
+                  guestSession={guestSession}
+                  setGuestSession={setGuestSession}
                 />
               </Stack>
             </Stack>
