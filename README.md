@@ -2,6 +2,8 @@
 
 Welcome to **MuseAI**, a revolutionary platform that reimagines music creation through the power of artificial intelligence. MuseAI offers a unique web interface where users can generate, listen to, and download AI-generated music, providing a new level of interactive experience for music enthusiasts and creators alike. [Visit MuseAI here](http://your-website-url.com).
 
+![Description of the Image](img/MuseAI_Visual.png)
+
 ## Key Features
 
 - **Generate Music:** Leverage AI to create unique music pieces.
