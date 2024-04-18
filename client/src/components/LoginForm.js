@@ -26,7 +26,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState, useRef } from "react";
-import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OAuthButtonGroup from "./OAuthButtonGroup.js";
 import PasswordField from "./PasswordField.js";
