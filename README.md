@@ -1,4 +1,5 @@
-## Link to site
+### MuseAI
+Link to site
 ## 
-## Tools we used
+## Architecture
 ## Local installation instructions
