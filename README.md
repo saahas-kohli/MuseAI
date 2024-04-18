@@ -1,1 +1,4 @@
-README details to be updated soon....
+## Link to site
+## 
+## Tools we used
+## Local installation instructions
