@@ -22,7 +22,7 @@ MuseAI is a web interface where users can generate, listen to, and download AI-g
 ## Local Installation
 
 First, make sure to have Docker and Docker-Compose installed on your machine.
-To set up MuseAI locally using Docker-Compose, follow these instructions:
+Then, to set up MuseAI locally using Docker-Compose, follow these instructions:
 
 1. **Clone the Repository**
    ```bash
