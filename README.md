@@ -33,6 +33,14 @@ To set up MuseAI locally using Docker-Compose, follow these instructions:
    docker-compose build
    docker-compose up
    ```
-   Note: This step might take a while to run       
-   Visit the site on http://localhost:3000/     
+   Note: This step might take a while to run.       
+   Finally, visit the site on http://localhost:3000/
+
+## Credits
+
+This project was written by Daniel Fields (dfields@uchicago.edu) and Saahas Kohli (skohli2@g.ucla.edu).
+
+Meta's recent research and insights into single-stage transformer language models with efficient token interleaving patterns
+were instrumental in enabling us to implement conditional music generation.
+
 
