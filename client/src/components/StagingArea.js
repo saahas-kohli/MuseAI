@@ -208,7 +208,7 @@ const StagingArea = ({
   const deleteGuestTable = async (guestName) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/deleteGuestTable/${guestName}`,
+        `http://${PUBLIC_IP}:9000/deleteGuestTable/${guestName}`,
         {
           method: "POST",
         }

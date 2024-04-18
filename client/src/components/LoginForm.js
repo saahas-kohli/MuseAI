@@ -64,7 +64,7 @@ const LoginForm = ({
   const sendForgotPasswordEmail = async (email) => {
     try {
       const response = await fetch(
-        `http://localhost:9000/forgot-password/${email}`,
+        `http://${PUBLIC_IP}:9000/forgot-password/${email}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

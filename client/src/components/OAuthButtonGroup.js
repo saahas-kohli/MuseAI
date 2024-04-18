@@ -1,6 +1,7 @@
 import { Button, ButtonGroup, Text, Icon } from "@chakra-ui/react";
 import { BsFillPersonFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { PUBLIC_IP } from "../deploy_config_client";
 
 const providers = [
   {
@@ -12,7 +13,7 @@ const providers = [
 const createGuestTable = async (guestName) => {
   try {
     const response = await fetch(
-      `http://localhost:9000/createGuestTable/${guestName}`,
+      `http://${PUBLIC_IP}:9000/createGuestTable/${guestName}`,
       {
         method: "POST",
       }
