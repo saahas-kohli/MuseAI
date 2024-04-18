@@ -40,7 +40,11 @@ To set up MuseAI locally using Docker-Compose, follow these instructions:
 
 This project was written by Daniel Fields (dfields@uchicago.edu) and Saahas Kohli (skohli2@g.ucla.edu).
 
-Meta's recent research and insights into single-stage transformer language models with efficient token interleaving patterns
-were instrumental in enabling us to implement conditional music generation.
+Thanks to Meta for their research into single-stage transformer language models, efficient token interleaving patterns,
+and ablation methods, as it was instrumental in enabling us to implement conditional music generation.
+
+
+
+
 
 
