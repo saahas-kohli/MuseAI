@@ -202,38 +202,47 @@ const StagingArea = ({
   const [play, setPlay] = useState(false);
   const [audioSrc, setAudioSrc] = useState("");
   const audioRef = useRef(null);
-
-  let isUnmount = false;
-
-  const deleteGuestTable = async (guestName) => {
-    try {
-      const response = await fetch(
-        `http://${PUBLIC_IP}:9000/deleteGuestTable/${guestName}`,
-        {
-          method: "POST",
-        }
-      );
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
+  const toast = useToast({
+    containerStyle: {
+      marginLeft: "205px",
+    },
+  });
 
   useEffect(() => {
-    console.log("Component mounted");
-
-    const copyIsUnmount = isUnmount;
-    isUnmount = true;
-    return () => {
-      if (copyIsUnmount) {
-        console.log("Component unmounted");
-        // IMPORTANT;
-        if (guestSession) {
-          deleteGuestTable(currentUser);
-          setCurrentUser("todo");
-        }
-      }
-    };
+    setMessageVisibility(true);
   }, []);
+
+  // let isUnmount = false;
+
+  // const deleteGuestTable = async (guestName) => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://${PUBLIC_IP}:9000/deleteGuestTable/${guestName}`,
+  //       {
+  //         method: "POST",
+  //       }
+  //     );
+  //   } catch (err) {
+  //     console.error(err.message);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   console.log("Component mounted");
+
+  //   const copyIsUnmount = isUnmount;
+  //   isUnmount = true;
+  //   return () => {
+  //     if (copyIsUnmount) {
+  //       console.log("Component unmounted");
+  //       // IMPORTANT;
+  //       if (guestSession) {
+  //         deleteGuestTable(currentUser);
+  //         setCurrentUser("todo");
+  //       }
+  //     }
+  //   };
+  // }, []);
 
   // Above code deletes guest table on unmount, but not on page reload or page close
 
@@ -650,7 +659,7 @@ const StagingArea = ({
         </Menu>
 
         <Box pos="absolute" right="0" marginTop="18px" marginRight="61px">
-          <Link href="https://github.com/dfields-1" isExternal={true}>
+          <Link href="https://github.com/saahas-kohli/MuseAI" isExternal={true}>
             <Icon
               as={BsGithub}
               boxSize={5}
@@ -673,7 +682,18 @@ const StagingArea = ({
             fontSize={darkMode ? "24px" : "19px"}
             textColor={"#A1AEC1"}
             borderRadius="5.5px"
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={() => {
+              /*
+              setDarkMode(!darkMode); 
+              Will implement in next update!
+              */
+              toast({
+                title: "Dark Mode coming soon!",
+                status: "info",
+                duration: 5000,
+                isClosable: true,
+              });
+            }}
             icon={darkMode ? <FaSun></FaSun> : <FaMoon></FaMoon>}
           />
         </Box>

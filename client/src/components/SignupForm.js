@@ -189,6 +189,7 @@ const SignupForm = ({
               </Stack>
               <Stack spacing="3">
                 <Button
+                  marginTop="4.5px"
                   fontSize="15px"
                   fontWeight={500}
                   borderRadius="8px"

@@ -56,13 +56,16 @@ const OAuthButtonGroup = ({
           key={name}
           flexGrow={1}
           onClick={() => {
-            if (currentUser === "todo") {
-              const guestName = generateRandomString(8);
-              localStorage.setItem("MuseAIUsername", guestName);
+            const guestTableName = localStorage.getItem("MuseAIGuest");
+            let guestName = guestTableName;
+            if (guestTableName === null) {
+              guestName = generateRandomString(8);
               createGuestTable(guestName);
-              setCurrentUser(guestName);
-              setGuestSession(true);
             }
+            localStorage.setItem("MuseAIGuest", guestName);
+            localStorage.setItem("MuseAIUser", guestName);
+            setCurrentUser(guestName);
+            setGuestSession(true);
             setLoggedIn(true);
             setTimeout(() => {
               navigate("/home");

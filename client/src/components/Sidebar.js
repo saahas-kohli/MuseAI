@@ -29,6 +29,7 @@ import {
   MenuGroup,
   MenuOptionGroup,
   MenuDivider,
+  useToast,
 } from "@chakra-ui/react";
 
 // components
@@ -56,6 +57,11 @@ const Sidebar = ({
 }) => {
   const [defaultDescription, setDefaultDescription] = useState("");
   const navigate = useNavigate();
+  const toast = useToast({
+    containerStyle: {
+      marginLeft: "205px",
+    },
+  });
 
   const getReadyToAddNewSong = async () => {
     try {
@@ -168,7 +174,7 @@ const Sidebar = ({
           >
             <Flex marginLeft="-7.5px" maxHeight="30px">
               <Box>
-                {currentUser === "todo" ? (
+                {guestSession ? (
                   <Avatar
                     bg="black"
                     size="sm"
@@ -191,7 +197,7 @@ const Sidebar = ({
                 marginTop="7.5px"
                 marginLeft="7px"
               >
-                {currentUser === "todo"
+                {guestSession
                   ? "Guest"
                   : currentUser.substring(0, currentUser.indexOf("@"))}
               </Box>
@@ -216,6 +222,14 @@ const Sidebar = ({
               marginLeft="5.5px"
               _hover={{ bg: "#EDECED", border: "2px solid #005FCD" }}
               _focus={{ outline: "none" }}
+              onClick={() => {
+                toast({
+                  title: "Settings and custom features coming soon!",
+                  status: "info",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              }}
             >
               Settings
             </MenuItem>
@@ -234,33 +248,44 @@ const Sidebar = ({
               _focus={{ outline: "none" }}
               icon={
                 <Icon
-                  as={currentUser === "todo" ? CiLogin : CiLogout}
+                  as={guestSession ? CiLogin : CiLogout}
                   marginBottom="1.5px"
                   boxSize={5}
                 ></Icon>
               }
               iconSpacing="9px"
               onClick={() => {
-                if (currentUser === "todo") {
-                  navigate("/login");
+                if (!canSwitchSongs) {
+                  toast({
+                    title: "Cannot switch accounts.",
+                    description:
+                      "Please wait for the current song to finish generating.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                } else if (playing) {
+                  toast({
+                    title: "Cannot switch accounts.",
+                    description: "Please pause the audio and try again.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  });
                 } else {
                   setLoggedIn(false);
-                  localStorage.removeItem("MuseAIUsername");
+                  localStorage.removeItem("MuseAIUser");
                   navigate("/login");
                 }
               }}
             >
-              {currentUser === "todo" ? "Log in" : "Log out"}
+              {guestSession ? "Log in" : "Log out"}
             </MenuItem>
-            {currentUser === "todo" ? (
-              <></>
-            ) : (
-              <Box fontSize="11px" color="#9A9B9A" marginLeft="16px">
-                {"("}
-                {currentUser}
-                {")"}
-              </Box>
-            )}
+            <Box fontSize="11px" color="#9A9B9A" marginLeft="16px">
+              {"("}
+              {guestSession ? "Guest account" : currentUser}
+              {")"}
+            </Box>
           </MenuList>
         </Menu>
       </Box>
