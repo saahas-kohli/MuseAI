@@ -14,14 +14,14 @@ MuseAI is a web interface where users can generate, listen to, and download AI-g
 ## Tech Stack
 
 - **Frontend:** React
-- **Backend:** Node.js/Express, WebSocket
+- **Backend:** Node.js/Express, WebSocket, PyTorch
 - **Database:** PostgreSQL
 - **Containerization:** Docker-Compose
 - **Deployment:** AWS EC2
 
 ## Local Installation
 
-First, make sure to have Docker and Docker-Compose installed on your machine.
+First, make sure you have Docker and Docker-Compose installed on your machine.
 Then, to set up MuseAI locally using Docker-Compose, follow these instructions:
 
 1. **Clone the Repository**
