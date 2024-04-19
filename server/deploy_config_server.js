@@ -1,1 +1,1 @@
-export const PUBLIC_IP = "3.23.103.220";
+export const PUBLIC_IP = "52.15.245.191";

@@ -1,4 +1,4 @@
-const PUBLIC_IP = "3.23.103.220";
+const PUBLIC_IP = "52.15.245.191";
 const CryptoJS = require("crypto-js");
 const nodemailer = require("nodemailer");
 const pool = require("./db");

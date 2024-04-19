@@ -6,6 +6,7 @@ services:
       context: ./client
     ports:
       - "80:3000"
+      - "443:3000"
     depends_on:
       - server
     environment:
