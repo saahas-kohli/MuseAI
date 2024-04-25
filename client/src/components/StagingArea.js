@@ -804,6 +804,7 @@ const AutosizeTextarea = ({
           body: JSON.stringify(body),
         }
       );
+      setListRender(!listRender);
     } catch (err) {
       console.error(err.message);
     }
