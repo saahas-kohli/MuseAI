@@ -17,7 +17,7 @@ async function sendVerificationEmail(userEmail) {
   const token = CryptoJS.SHA256(userEmail).toString(CryptoJS.enc.Hex);
   // const token = crypto.randomBytes(20).toString('hex'); // Generate a unique token
   // There is a very low probability (1/2^80?) that the same token is generated twice
-  const verificationLink = `http://${PUBLIC_IP}:3000/verify-email?token=${token}`;
+  const verificationLink = `http://muse-ai.co/verify-email?token=${token}`;
 
   await pool.query(
     `INSERT INTO email_verification (email, token, is_verified) VALUES($1, $2, FALSE);`,
