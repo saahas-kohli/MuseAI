@@ -1,6 +1,6 @@
 # MuseAI
 
-MuseAI is a web interface where users can generate, listen to, and download AI-generated music. [Visit MuseAI here](http://your-website-url.com).
+MuseAI is a web interface where users can generate, listen to, and download AI-generated music. [Visit MuseAI here](http://muse-ai.co).
 
 ![Description of the Image](img/MuseAI_Visual.png)
 
