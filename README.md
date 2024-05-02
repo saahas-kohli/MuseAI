@@ -4,6 +4,8 @@ MuseAI is a web application in the style of ChatGPT where users can generate, li
 
 ![Description of the Image](img/MuseAI_Visual.png)
 
+(Note: Website performance is optimized for Chrome users)
+
 ## Key Features
 
 - **Generate Music:** Leverage AI to create unique music pieces.
