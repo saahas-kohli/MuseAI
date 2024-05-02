@@ -28,7 +28,7 @@ Then, to set up MuseAI locally using Docker-Compose, follow these instructions:
    ```bash
    git clone git@github.com:saahas-kohli/MuseAI.git
    cd MuseAI
-   git checkout music-docker-local
+   git checkout docker-local
 2. **Build and Run Docker Containers**
    ```bash
    docker-compose build
