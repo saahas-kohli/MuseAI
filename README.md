@@ -1,6 +1,6 @@
 # MuseAI
 
-MuseAI is a web interface where users can generate, listen to, and download AI-generated music. [Visit MuseAI here](http://muse-ai.co).
+MuseAI is a web application in the style of ChatGPT where users can generate, listen to, and download AI-generated music. [Visit MuseAI here](http://muse-ai.co).
 
 ![Description of the Image](img/MuseAI_Visual.png)
 
@@ -17,7 +17,7 @@ MuseAI is a web interface where users can generate, listen to, and download AI-g
 - **Backend:** Node.js/Express, WebSocket, PyTorch
 - **Database:** PostgreSQL
 - **Containerization:** Docker-Compose
-- **Deployment:** AWS EC2
+- **Deployment:** AWS EC2, Amazon Route 53
 
 ## Local Installation
 
