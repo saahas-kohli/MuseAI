@@ -70,7 +70,7 @@ function App() {
             path="/home"
             element={
               loggedIn ? (
-                <Flex h="780px">
+                <Flex h="810px">
                   <Box className="sidebar" bg="#F9F8F8" w="260px">
                     <Box marginRight="4px">
                       <Sidebar
