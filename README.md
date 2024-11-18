@@ -1,6 +1,6 @@
 # MuseAI
 
-MuseAI is a web application in the style of ChatGPT where users can generate, listen to, and download AI-generated music. [Visit MuseAI here](http://muse-ai.co).
+MuseAI is a web application in the style of ChatGPT where users can generate, listen to, and download AI-generated music. [Visit MuseAI here](http://muse-ai.co) (EDIT: site no longer up as of November 2024, see below for instructions on local deployment).
 
 ![Description of the Image](img/MuseAI_Visual.png)
 
